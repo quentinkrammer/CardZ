@@ -1,0 +1,19 @@
+{
+  "name": "backend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite-node --mode development --watch src/index.ts",
+    "stylefix": "prettier ./src --write --config ../.prettierrc.cjs",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.12.0",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.11",
+    "vite-node": "^3.0.4",
+    "vitest": "^3.0.4"
+  }
+}
