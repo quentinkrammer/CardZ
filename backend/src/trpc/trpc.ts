@@ -1,5 +1,6 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
+import EventEmitter from "node:events";
 import { z } from "zod";
 
 const userIdSchema = z.object({ userId: z.string() });
@@ -19,3 +20,5 @@ export const authedProcedure = t.procedure.use(async function isAuthed(opts) {
     ctx: { user: ctx.userId },
   });
 });
+
+export const ee = new EventEmitter();
