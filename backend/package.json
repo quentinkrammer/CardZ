@@ -10,6 +10,9 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@types/connect": "^3.4.38",
+    "@types/cors": "^2.8.17",
+    "@types/jsonwebtoken": "^9.0.8",
     "@types/node": "^22.12.0",
     "typescript": "^5.7.3",
     "vite": "^6.0.11",
@@ -17,7 +20,12 @@
     "vitest": "^3.0.4"
   },
   "dependencies": {
-    "@trpc/server": "^10.45.2",
+    "@trpc/server": "11.0.0-rc.730",
+    "connect": "^3.7.0",
+    "cookie": "^1.0.2",
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^9.0.2",
+    "nanoid": "^5.0.9",
     "zod": "^3.24.1"
   }
 }
