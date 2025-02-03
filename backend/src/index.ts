@@ -27,6 +27,7 @@ middleware
       COOKIE_SECRET,
       function (err, token) {
         if (err) {
+          console.log("request has no user ID token");
           signedUserId = nanoid();
           const newSignedUserIdToken = jwt.sign(signedUserId, COOKIE_SECRET);
           res.setHeader(
