@@ -20,7 +20,6 @@ middleware
     }),
   )
   .use(function attachUserCookie(req, res, next) {
-    console.log("middelware");
     const cookies = cookie.parse(req.headers.cookie ?? "");
     let signedUserId: string;
     jwt.verify(

@@ -11,7 +11,19 @@ export const createContext = ({ req }: CreateHTTPContextOptions) => {
 };
 type Context = Awaited<ReturnType<typeof createContext>>;
 
-export const t = initTRPC.context<Context>().create();
+export const t = initTRPC.context<Context>().create({
+  sse: {
+    maxDurationMs: 5 * 60 * 1_000, // 5 minutes
+    ping: {
+      enabled: true,
+      intervalMs: 3_000,
+    },
+    client: {
+      reconnectAfterInactivityMs: 5_000,
+    },
+  },
+});
+
 export const publicProcedure = t.procedure;
 export const authedProcedure = t.procedure.use(async function isAuthed(opts) {
   const { ctx } = opts;

@@ -1,15 +1,21 @@
 import { on } from "node:events";
 import { z } from "zod";
-import { ee, publicProcedure, t } from "./trpc.js";
+import { authedProcedure, ee, publicProcedure, t } from "./trpc.js";
 
 export const gameRouter = t.router({
-  test: publicProcedure.input(z.string()).query((opts) => {
+  test: authedProcedure.input(z.string()).query((opts) => {
     return { input: opts.input, context: opts.ctx };
   }),
   onEvent: publicProcedure.subscription(async function* (opts) {
+    console.log("subscribing user: " + opts.ctx.userId);
     // listen for new events
-    for await (const [data] of on(ee, "add")) {
+    for await (const [data] of on(ee, "gameEvent")) {
       yield data;
     }
+  }),
+  playCard: authedProcedure.mutation(() => {
+    const action = { action: "playCard", card: { color: "blue", number: "1" } };
+    ee.emit("gameEvent", action);
+    return action;
   }),
 });
