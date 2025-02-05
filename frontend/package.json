@@ -8,16 +8,20 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "stylecheck": "prettier . --check --config ./.prettierrc",
+    "stylefix": "prettier . --write --config ./.prettierrc"
   },
   "dependencies": {
-    "backend": "workspace:*",
+    "@tailwindcss/vite": "^4.0.3",
     "@tanstack/react-query": "^5.66.0",
     "@trpc/client": "11.0.0-rc.730",
     "@trpc/react-query": "11.0.0-rc.730",
     "@trpc/server": "11.0.0-rc.730",
+    "backend": "workspace:*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "tailwindcss": "^4.0.3",
     "zod": "^3.24.1"
   },
   "devDependencies": {
@@ -29,6 +33,8 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.16",
     "globals": "^15.14.0",
+    "prettier": "^3.4.2",
+    "prettier-plugin-tailwindcss": "^0.6.11",
     "typescript": "~5.7.3",
     "typescript-eslint": "^8.18.2",
     "vite": "^6.0.5"

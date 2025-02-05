@@ -1,4 +1,3 @@
-import "./App.css";
 import { useTestQuery } from "./query/useTestQuery";
 import { trpc } from "./trpc";
 import { useGameSubscription } from "./useGameSubscription";
@@ -25,5 +24,5 @@ function App() {
 export default App;
 
 function Table() {
-  return "table";
+  return <div className="bg-green-800 text-white">Table</div>;
 }
