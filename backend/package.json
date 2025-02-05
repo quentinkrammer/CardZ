@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite-node --mode development --watch src/index.ts",
     "stylefix": "prettier ./src --write --config ../.prettierrc.cjs",
-    "test": "vitest run",
+    "test": "vitest --mode development run",
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate --config drizzle.production.config.ts",
     "db:migrate": "drizzle-kit migrate --config drizzle.production.config.ts",
