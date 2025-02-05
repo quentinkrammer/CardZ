@@ -9,16 +9,21 @@ function App() {
   const sub = useGameSubscription();
   return (
     <>
-      <div>Name: {data?.input}</div>
+      {/* <div>Name: {data?.input}</div>
       <div>ID: {data?.context.userId}</div>
-      <button onClick={() => playCard.mutate()}>Play Card</button>
+      <button onClick={() => playCard.mutate()}>Play Card</button> */}
       {/* {result.status === "error" && (
         <button onClick={() => result.reset()}>
           Something went wrong - restart the subscription
         </button>
       )} */}
+      <Table />
     </>
   );
 }
 
 export default App;
+
+function Table() {
+  return "table";
+}
