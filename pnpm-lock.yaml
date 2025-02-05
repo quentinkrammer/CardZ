@@ -77,6 +77,9 @@ importers:
       backend:
         specifier: workspace:*
         version: link:../backend
+      classnames:
+        specifier: ^2.5.1
+        version: 2.5.1
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -844,6 +847,9 @@ packages:
   check-error@2.1.1:
     resolution: {integrity: sha512-OAlb+T7V4Op9OwdkjmguYRqncdlx5JiofwOAUkmTF+jNdHwzTaTs4sRAGpzLF3oOz5xAyDGrPgeIDFQmDOTiJw==}
     engines: {node: '>= 16'}
+
+  classnames@2.5.1:
+    resolution: {integrity: sha512-saHYOzhIQs6wy2sVxTM6bUDsQO4F50V9RQ22qBpEdCW+I+/Wmke2HOl6lS6dTpdxVhb88/I6+Hs+438c3lfUow==}
 
   color-convert@2.0.1:
     resolution: {integrity: sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==}
@@ -2337,6 +2343,8 @@ snapshots:
       supports-color: 7.2.0
 
   check-error@2.1.1: {}
+
+  classnames@2.5.1: {}
 
   color-convert@2.0.1:
     dependencies:

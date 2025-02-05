@@ -1,3 +1,4 @@
+import { Table } from "./components/Table";
 import { useTestQuery } from "./query/useTestQuery";
 import { trpc } from "./trpc";
 import { useGameSubscription } from "./useGameSubscription";
@@ -6,6 +7,7 @@ function App() {
   const { data } = useTestQuery();
   const playCard = trpc.game.playCard.useMutation();
   const sub = useGameSubscription();
+
   return (
     <>
       {/* <div>Name: {data?.input}</div>
@@ -16,13 +18,11 @@ function App() {
           Something went wrong - restart the subscription
         </button>
       )} */}
-      <Table />
+      <div className="h-dvh">
+        <Table />
+      </div>
     </>
   );
 }
 
 export default App;
-
-function Table() {
-  return <div className="bg-green-800 text-white">Table</div>;
-}
