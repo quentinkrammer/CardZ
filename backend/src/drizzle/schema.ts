@@ -60,14 +60,19 @@ export const communicationTable = sqliteTable("communications", {
     .notNull(),
 });
 
-export const questToPlayerTable = sqliteTable("quest_to_player", {
+export const draftedQuestTable = sqliteTable("draft", {
   id: int().primaryKey({ autoIncrement: true }),
-  playerId: int("player_id")
-    .references(() => playerTable.id)
+  gameId: int("game_id")
+    .references(() => gameTable.id)
     .notNull(),
   questId: int("quest_id")
     .references(() => questTable.id)
     .notNull(),
+  // This is dangerously bad. Technically a 'drafted-quest' could be assigned to a player,
+  // that does not partake in the game referenced in 'gameId'
+  playerId: int("player_id").references(() => playerTable.id),
+  turnId: int("turn_id").references(() => turnTable.id),
+  isSuccess: int({ mode: "boolean" }).notNull(),
 });
 
 export const cardToPlayerTable = sqliteTable("card_to_player", {
@@ -78,15 +83,4 @@ export const cardToPlayerTable = sqliteTable("card_to_player", {
   playerId: int("player_id")
     .references(() => playerTable.id)
     .notNull(),
-});
-
-export const questToTurnTable = sqliteTable("quest_to_turn", {
-  id: int().primaryKey({ autoIncrement: true }),
-  questId: int("quest_id")
-    .references(() => questTable.id)
-    .notNull(),
-  turnId: int("turn_id")
-    .references(() => turnTable.id)
-    .notNull(),
-  isSuccess: int({ mode: "boolean" }).notNull(),
 });

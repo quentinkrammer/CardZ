@@ -3,11 +3,10 @@ import {
   cardTable,
   cardToPlayerTable,
   communicationTable,
+  draftedQuestTable,
   gameTable,
   playerTable,
   questTable,
-  questToPlayerTable,
-  questToTurnTable,
   roomTable,
   turnTable,
   usersTable,
@@ -29,6 +28,7 @@ export const gameRelations = relations(gameTable, ({ many, one }) => {
     }),
     players: many(playerTable),
     turn: many(turnTable),
+    draftedQuests: many(draftedQuestTable),
   };
 });
 
@@ -42,13 +42,13 @@ export const playerRelations = relations(playerTable, ({ many, one }) => {
       references: [gameTable.id],
       fields: [playerTable.gameId],
     }),
-    questToPlayer: many(questToPlayerTable),
+    draftedQuests: many(draftedQuestTable),
     cardToPlayer: many(cardToPlayerTable),
   };
 });
 
 export const questRelations = relations(questTable, ({ many }) => {
-  return { questToPlayer: many(questToPlayerTable) };
+  return { draftedQuests: many(draftedQuestTable) };
 });
 
 export const cardRelations = relations(cardTable, ({ many }) => {
@@ -69,7 +69,7 @@ export const turnRelations = relations(turnTable, ({ many, one }) => {
       references: [gameTable.id],
       fields: [turnTable.gameId],
     }),
-    questToTurnTable: many(questToTurnTable),
+    draftedQuests: many(draftedQuestTable),
   };
 });
 
@@ -89,22 +89,6 @@ export const communicationRelations = relations(
   }
 );
 
-export const questToPlayerRelations = relations(
-  questToPlayerTable,
-  ({ one }) => {
-    return {
-      player: one(playerTable, {
-        references: [playerTable.id],
-        fields: [questToPlayerTable.playerId],
-      }),
-      quest: one(questTable, {
-        references: [questTable.id],
-        fields: [questToPlayerTable.questId],
-      }),
-    };
-  }
-);
-
 export const cardToPlayerRelations = relations(cardToPlayerTable, ({ one }) => {
   return {
     player: one(playerTable, {
@@ -118,18 +102,23 @@ export const cardToPlayerRelations = relations(cardToPlayerTable, ({ one }) => {
   };
 });
 
-export const questToTurnTableRelations = relations(
-  questToTurnTable,
-  ({ one }) => {
-    return {
-      quest: one(questTable, {
-        references: [questTable.id],
-        fields: [questToTurnTable.questId],
-      }),
-      turn: one(turnTable, {
-        references: [turnTable.id],
-        fields: [questToTurnTable.turnId],
-      }),
-    };
-  }
-);
+export const draftedQuestRelations = relations(draftedQuestTable, ({ one }) => {
+  return {
+    game: one(gameTable, {
+      references: [gameTable.id],
+      fields: [draftedQuestTable.gameId],
+    }),
+    quest: one(questTable, {
+      references: [questTable.id],
+      fields: [draftedQuestTable.questId],
+    }),
+    player: one(playerTable, {
+      references: [playerTable.id],
+      fields: [draftedQuestTable.playerId],
+    }),
+    turnId: one(turnTable, {
+      references: [turnTable.id],
+      fields: [draftedQuestTable.turnId],
+    }),
+  };
+});
