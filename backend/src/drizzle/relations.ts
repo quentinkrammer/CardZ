@@ -5,9 +5,9 @@ import {
   communicationTable,
   draftedQuestTable,
   gameTable,
+  lobbyTable,
   playerTable,
   questTable,
-  roomTable,
   turnTable,
   usersTable,
 } from "./schema.js";
@@ -16,15 +16,15 @@ export const userRelations = relations(usersTable, ({ many }) => {
   return { players: many(playerTable) };
 });
 
-export const roomRelations = relations(roomTable, ({ many }) => {
+export const lobbyRelations = relations(lobbyTable, ({ many }) => {
   return { games: many(gameTable) };
 });
 
 export const gameRelations = relations(gameTable, ({ many, one }) => {
   return {
-    room: one(roomTable, {
-      references: [roomTable.id],
-      fields: [gameTable.roomId],
+    lobby: one(lobbyTable, {
+      references: [lobbyTable.id],
+      fields: [gameTable.lobbyId],
     }),
     players: many(playerTable),
     turn: many(turnTable),

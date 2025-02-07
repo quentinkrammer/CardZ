@@ -1,18 +1,18 @@
 import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const usersTable = sqliteTable("users", {
-  id: int().primaryKey({ autoIncrement: true }),
+  id: int().primaryKey(),
   name: text().notNull(),
 });
 
-export const roomTable = sqliteTable("rooms", {
-  id: int().primaryKey({ autoIncrement: true }),
+export const lobbyTable = sqliteTable("lobby", {
+  id: int().primaryKey(),
 });
 
 export const gameTable = sqliteTable("games", {
   id: int().primaryKey({ autoIncrement: true }),
-  roomId: int("room_id")
-    .references(() => roomTable.id)
+  lobbyId: int("lobby_id")
+    .references(() => lobbyTable.id)
     .notNull(),
 });
 
