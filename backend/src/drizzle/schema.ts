@@ -1,12 +1,19 @@
+import { relations } from "drizzle-orm";
 import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const usersTable = sqliteTable("users", {
   id: int().primaryKey(),
   name: text().notNull(),
 });
+export const userRelations = relations(usersTable, ({ many }) => {
+  return { players: many(playerTable) };
+});
 
 export const lobbyTable = sqliteTable("lobby", {
   id: int().primaryKey(),
+});
+export const lobbyRelations = relations(lobbyTable, ({ many }) => {
+  return { games: many(gameTable) };
 });
 
 export const gameTable = sqliteTable("games", {
@@ -14,6 +21,17 @@ export const gameTable = sqliteTable("games", {
   lobbyId: int("lobby_id")
     .references(() => lobbyTable.id)
     .notNull(),
+});
+export const gameRelations = relations(gameTable, ({ many, one }) => {
+  return {
+    lobby: one(lobbyTable, {
+      references: [lobbyTable.id],
+      fields: [gameTable.lobbyId],
+    }),
+    players: many(playerTable),
+    turn: many(turnTable),
+    draftedQuests: many(draftedQuestTable),
+  };
 });
 
 export const playerTable = sqliteTable("players", {
@@ -26,15 +44,39 @@ export const playerTable = sqliteTable("players", {
     .references(() => gameTable.id)
     .notNull(),
 });
+export const playerRelations = relations(playerTable, ({ many, one }) => {
+  return {
+    user: one(usersTable, {
+      references: [usersTable.id],
+      fields: [playerTable.userId],
+    }),
+    game: one(gameTable, {
+      references: [gameTable.id],
+      fields: [playerTable.gameId],
+    }),
+    draftedQuests: many(draftedQuestTable),
+    cardToPlayer: many(cardToPlayerTable),
+  };
+});
 
 export const questTable = sqliteTable("quests", {
   id: text().primaryKey(),
+});
+export const questRelations = relations(questTable, ({ many }) => {
+  return { draftedQuests: many(draftedQuestTable) };
 });
 
 export const cardTable = sqliteTable("cards", {
   id: int().primaryKey({ autoIncrement: true }),
   color: text({ enum: ["red", "blue", "greep", "orange", "black"] }).notNull(),
   value: int({ mode: "number" }).notNull(),
+});
+export const cardRelations = relations(cardTable, ({ many }) => {
+  return {
+    cardToPlayer: many(cardToPlayerTable),
+    turns: many(turnTable),
+    communications: many(communicationTable),
+  };
 });
 
 export const turnTable = sqliteTable("turns", {
@@ -46,6 +88,19 @@ export const turnTable = sqliteTable("turns", {
   gameId: int("game_id")
     .references(() => gameTable.id)
     .notNull(),
+});
+export const turnRelations = relations(turnTable, ({ many, one }) => {
+  return {
+    card: one(cardTable, {
+      references: [cardTable.id],
+      fields: [turnTable.cardId],
+    }),
+    game: one(gameTable, {
+      references: [gameTable.id],
+      fields: [turnTable.gameId],
+    }),
+    draftedQuests: many(draftedQuestTable),
+  };
 });
 
 export const communicationTable = sqliteTable("communications", {
@@ -59,6 +114,21 @@ export const communicationTable = sqliteTable("communications", {
     .references(() => turnTable.id)
     .notNull(),
 });
+export const communicationRelations = relations(
+  communicationTable,
+  ({ one }) => {
+    return {
+      card: one(cardTable, {
+        references: [cardTable.id],
+        fields: [communicationTable.cardId],
+      }),
+      turn: one(turnTable, {
+        references: [turnTable.id],
+        fields: [communicationTable.turnId],
+      }),
+    };
+  }
+);
 
 export const draftedQuestTable = sqliteTable("draft", {
   id: int().primaryKey({ autoIncrement: true }),
@@ -74,6 +144,26 @@ export const draftedQuestTable = sqliteTable("draft", {
   turnId: int("turn_id").references(() => turnTable.id),
   isSuccess: int({ mode: "boolean" }).notNull(),
 });
+export const draftedQuestRelations = relations(draftedQuestTable, ({ one }) => {
+  return {
+    game: one(gameTable, {
+      references: [gameTable.id],
+      fields: [draftedQuestTable.gameId],
+    }),
+    quest: one(questTable, {
+      references: [questTable.id],
+      fields: [draftedQuestTable.questId],
+    }),
+    player: one(playerTable, {
+      references: [playerTable.id],
+      fields: [draftedQuestTable.playerId],
+    }),
+    turnId: one(turnTable, {
+      references: [turnTable.id],
+      fields: [draftedQuestTable.turnId],
+    }),
+  };
+});
 
 export const cardToPlayerTable = sqliteTable("card_to_player", {
   id: int().primaryKey({ autoIncrement: true }),
@@ -83,4 +173,16 @@ export const cardToPlayerTable = sqliteTable("card_to_player", {
   playerId: int("player_id")
     .references(() => playerTable.id)
     .notNull(),
+});
+export const cardToPlayerRelations = relations(cardToPlayerTable, ({ one }) => {
+  return {
+    player: one(playerTable, {
+      references: [playerTable.id],
+      fields: [cardToPlayerTable.cardId],
+    }),
+    card: one(cardTable, {
+      references: [cardTable.id],
+      fields: [cardToPlayerTable.cardId],
+    }),
+  };
 });
