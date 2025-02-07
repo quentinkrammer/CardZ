@@ -1,5 +1,6 @@
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { nanoid } from "nanoid";
 
 export const usersTable = sqliteTable("users", {
   id: int().primaryKey(),
@@ -10,7 +11,9 @@ export const userRelations = relations(usersTable, ({ many }) => {
 });
 
 export const lobbyTable = sqliteTable("lobby", {
-  id: text().primaryKey(),
+  id: text()
+    .primaryKey()
+    .$defaultFn(() => nanoid()),
 });
 export const lobbyRelations = relations(lobbyTable, ({ many }) => {
   return { games: many(gameTable) };
