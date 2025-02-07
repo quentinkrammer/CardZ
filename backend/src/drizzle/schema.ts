@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const usersTable = sqliteTable("users", {
@@ -10,7 +10,7 @@ export const userRelations = relations(usersTable, ({ many }) => {
 });
 
 export const lobbyTable = sqliteTable("lobby", {
-  id: int().primaryKey(),
+  id: text().primaryKey(),
 });
 export const lobbyRelations = relations(lobbyTable, ({ many }) => {
   return { games: many(gameTable) };
@@ -44,6 +44,8 @@ export const playerTable = sqliteTable("players", {
     .references(() => gameTable.id)
     .notNull(),
 });
+export type SelectPlayer = InferSelectModel<typeof playerTable>;
+export type InsertPlayer = InferInsertModel<typeof playerTable>;
 export const playerRelations = relations(playerTable, ({ many, one }) => {
   return {
     user: one(usersTable, {
@@ -71,6 +73,8 @@ export const cardTable = sqliteTable("cards", {
   color: text({ enum: ["red", "blue", "greep", "orange", "black"] }).notNull(),
   value: int({ mode: "number" }).notNull(),
 });
+export type SelectCard = InferSelectModel<typeof cardTable>;
+export type InsertCard = InferInsertModel<typeof cardTable>;
 export const cardRelations = relations(cardTable, ({ many }) => {
   return {
     cardToPlayer: many(cardToPlayerTable),
@@ -89,6 +93,8 @@ export const turnTable = sqliteTable("turns", {
     .references(() => gameTable.id)
     .notNull(),
 });
+export type SelectTurn = InferSelectModel<typeof turnTable>;
+export type InsertTurn = InferInsertModel<typeof turnTable>;
 export const turnRelations = relations(turnTable, ({ many, one }) => {
   return {
     card: one(cardTable, {
@@ -100,6 +106,7 @@ export const turnRelations = relations(turnTable, ({ many, one }) => {
       fields: [turnTable.gameId],
     }),
     draftedQuests: many(draftedQuestTable),
+    communications: many(communicationTable),
   };
 });
 
@@ -114,6 +121,8 @@ export const communicationTable = sqliteTable("communications", {
     .references(() => turnTable.id)
     .notNull(),
 });
+export type SelectComunication = InferSelectModel<typeof communicationTable>;
+export type InsertCommunication = InferInsertModel<typeof communicationTable>;
 export const communicationRelations = relations(
   communicationTable,
   ({ one }) => {
@@ -144,6 +153,9 @@ export const draftedQuestTable = sqliteTable("draft", {
   turnId: int("turn_id").references(() => turnTable.id),
   isSuccess: int({ mode: "boolean" }).notNull(),
 });
+export type SelectQuest = InferSelectModel<typeof draftedQuestTable>;
+export type InsertQuest = InferInsertModel<typeof draftedQuestTable>;
+
 export const draftedQuestRelations = relations(draftedQuestTable, ({ one }) => {
   return {
     game: one(gameTable, {
