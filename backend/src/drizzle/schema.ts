@@ -70,8 +70,8 @@ export const questRelations = relations(questTable, ({ many }) => {
 
 export const cardTable = sqliteTable("cards", {
   id: int().primaryKey({ autoIncrement: true }),
-  color: text({ enum: ["red", "blue", "greep", "orange", "black"] }).notNull(),
-  value: int({ mode: "number" }).notNull(),
+  color: text({ enum: ["red", "blue", "green", "orange", "black"] }).notNull(),
+  value: text().notNull(),
 });
 export type SelectCard = InferSelectModel<typeof cardTable>;
 export type InsertCard = InferInsertModel<typeof cardTable>;
