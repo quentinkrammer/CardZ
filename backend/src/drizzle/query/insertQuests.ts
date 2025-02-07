@@ -4,10 +4,11 @@ import { InsertCard, questTable } from "../schema.js";
 
 const colors: InsertCard["color"][] = ["red", "orange", "green", "blue"];
 
-export function insertQuests() {
+export async function insertQuests() {
   const baseQuests = colors.flatMap((color) =>
     range(35).map((index) => ({ id: `${color}-${index + 1}` }))
   );
 
-  db.insert(questTable).values(baseQuests);
+  const quests = await db.insert(questTable).values(baseQuests).returning();
+  return quests;
 }

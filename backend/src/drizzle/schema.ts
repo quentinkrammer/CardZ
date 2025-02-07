@@ -25,6 +25,7 @@ export const gameTable = sqliteTable("games", {
     .references(() => lobbyTable.id)
     .notNull(),
 });
+
 export const gameRelations = relations(gameTable, ({ many, one }) => {
   return {
     lobby: one(lobbyTable, {
@@ -153,7 +154,7 @@ export const draftedQuestTable = sqliteTable("draft", {
   // that does not partake in the game referenced in 'gameId'
   playerId: int("player_id").references(() => playerTable.id),
   turnId: int("turn_id").references(() => turnTable.id),
-  isSuccess: int({ mode: "boolean" }).notNull(),
+  isSuccess: int({ mode: "boolean" }),
 });
 export type SelectQuest = InferSelectModel<typeof draftedQuestTable>;
 export type InsertQuest = InferInsertModel<typeof draftedQuestTable>;

@@ -4,7 +4,7 @@ import { cardTable, InsertCard } from "../schema.js";
 
 const colors: InsertCard["color"][] = ["red", "orange", "green", "blue"];
 
-export function insertCards() {
+export async function insertCards() {
   const baseCards = colors.flatMap((color) =>
     range(9).map((number) => ({ color, value: `${number}` }))
   );
@@ -13,5 +13,11 @@ export function insertCards() {
     color: "black" as const,
     value: `${number}`,
   }));
-  db.insert(cardTable).values([...baseCards, ...trumpCards]);
+
+  const cards = await db
+    .insert(cardTable)
+    .values([...baseCards, ...trumpCards])
+    .returning();
+
+  return cards;
 }
