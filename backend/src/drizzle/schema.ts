@@ -85,7 +85,6 @@ export const cardRelations = relations(cardTable, ({ many }) => {
 
 export const turnTable = sqliteTable("turns", {
   id: int().primaryKey({ autoIncrement: true }),
-  index: int({ mode: "number" }).notNull(),
   cardId: int("card_id")
     .references(() => cardTable.id)
     .notNull(),

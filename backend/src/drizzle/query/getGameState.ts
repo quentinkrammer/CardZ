@@ -8,7 +8,6 @@ import {
   SelectComunication,
   SelectPlayer,
   SelectQuest,
-  SelectTurn,
   turnTable,
 } from "../schema.js";
 
@@ -16,11 +15,11 @@ type Turn = {
   card: SelectCard;
   communications: Array<Pick<SelectComunication, "index" | "cardId" | "type">>;
   quests: Array<Pick<SelectQuest, "questId" | "isSuccess">>;
-  index: SelectTurn["index"];
   playerId: SelectPlayer["id"];
+  playedCardNumber: number;
 };
 
-async function getGameState(db: Db, lobbyId: number) {
+export async function getGameState(db: Db, lobbyId: number) {
   const game = await db.query.gameTable.findFirst({
     where: eq(gameTable.lobbyId, lobbyId),
     orderBy: [desc(gameTable.id)],
@@ -39,13 +38,13 @@ async function getGameState(db: Db, lobbyId: number) {
       card: { with: { cardToPlayer: { with: { player: true } } } },
     },
     where: eq(turnTable.gameId, game.id),
-    orderBy: [asc(turnTable.index)],
+    orderBy: [asc(turnTable.id)],
   });
 
-  const turnsFlat = turns.reduce<Turn[]>((prev, curr) => {
-    const { card, communications, draftedQuests, index } = curr;
+  const turnsFlat = turns.reduce<Turn[]>((prev, curr, index) => {
+    const { card, communications, draftedQuests } = curr;
     prev.push({
-      index,
+      playedCardNumber: index,
       // TODO throw error if playerId does not exist
       playerId: card.cardToPlayer[0]!.playerId,
       card: card,
