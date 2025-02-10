@@ -9,6 +9,8 @@ export const usersTable = sqliteTable("users", {
 export const userRelations = relations(usersTable, ({ many }) => {
   return { players: many(playerTable), lobbyToUser: many(lobbyToUserTable) };
 });
+export type SelectUser = InferSelectModel<typeof usersTable>;
+export type InsertUser = InferInsertModel<typeof usersTable>;
 
 export const lobbyTable = sqliteTable("lobby", {
   id: text()
@@ -18,6 +20,8 @@ export const lobbyTable = sqliteTable("lobby", {
 export const lobbyRelations = relations(lobbyTable, ({ many }) => {
   return { games: many(gameTable), lobbyToUser: many(lobbyToUserTable) };
 });
+export type SelectLobby = InferSelectModel<typeof lobbyTable>;
+export type InsertLobby = InferInsertModel<typeof lobbyTable>;
 
 export const gameTable = sqliteTable("games", {
   id: int().primaryKey({ autoIncrement: true }),
@@ -207,7 +211,7 @@ export const cardToPlayerRelations = relations(cardToPlayerTable, ({ one }) => {
 
 export const lobbyToUserTable = sqliteTable("lobby_to_user", {
   id: int().primaryKey({ autoIncrement: true }),
-  lobbyId: int("lobby_id")
+  lobbyId: text("lobby_id")
     .references(() => lobbyTable.id)
     .notNull(),
   userId: int("user_id")
@@ -226,3 +230,5 @@ export const lobbyToUserRelations = relations(lobbyToUserTable, ({ one }) => {
     }),
   };
 });
+export type SelectLobbyToUser = InferSelectModel<typeof lobbyToUserTable>;
+export type InsertLobbyToUser = InferInsertModel<typeof lobbyToUserTable>;
