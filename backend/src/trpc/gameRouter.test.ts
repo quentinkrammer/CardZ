@@ -20,12 +20,7 @@ describe("trpc router tests", () => {
   test("write to db", async () => {
     const res = await db
       .insert(usersTable)
-      .values({
-        age: 42,
-        email: "foo@bar.com",
-        name: "foo",
-        id: 1337,
-      })
+      .values({ name: "John" })
       .returning();
 
     console.log(JSON.stringify(res));

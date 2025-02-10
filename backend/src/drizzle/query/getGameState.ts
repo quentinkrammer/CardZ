@@ -1,14 +1,14 @@
 import { TRPCError } from "@trpc/server";
-import { asc, desc, eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { pick } from "../../utils/pick.js";
 import { type Db } from "../drizzle.js";
 import {
   gameTable,
   SelectCard,
   SelectComunication,
+  SelectDraftedQuest,
   SelectPlayer,
   SelectQuest,
-  turnTable,
 } from "../schema.js";
 
 type Turn = {
@@ -18,11 +18,24 @@ type Turn = {
   playerId: SelectPlayer["id"];
   playedCardNumber: number;
 };
+type Card = SelectCard & { playerId: SelectPlayer["id"] };
+type Quest = Pick<SelectDraftedQuest, "id" | "playerId">;
 
 export async function getGameState(db: Db, lobbyId: number) {
   const game = await db.query.gameTable.findFirst({
     where: eq(gameTable.lobbyId, lobbyId),
     orderBy: [desc(gameTable.id)],
+    with: {
+      player: { with: { cardToPlayer: { with: { card: true } } } },
+      turn: {
+        with: {
+          communications: true,
+          draftedQuests: true,
+          card: { with: { cardToPlayer: { with: { player: true } } } },
+        },
+      },
+      draftedQuests: true,
+    },
   });
   if (!game)
     throw new TRPCError({
@@ -30,18 +43,7 @@ export async function getGameState(db: Db, lobbyId: number) {
       message: `No game with lobby Id "${lobbyId}" found.`,
     });
 
-  const turns = await db.query.turnTable.findMany({
-    columns: { cardId: false, gameId: false },
-    with: {
-      communications: true,
-      draftedQuests: true,
-      card: { with: { cardToPlayer: { with: { player: true } } } },
-    },
-    where: eq(turnTable.gameId, game.id),
-    orderBy: [asc(turnTable.id)],
-  });
-
-  const turnsFlat = turns.reduce<Turn[]>((prev, curr, index) => {
+  const turns = game.turn.reduce<Turn[]>((prev, curr, index) => {
     const { card, communications, draftedQuests } = curr;
     prev.push({
       playedCardNumber: index,
@@ -56,5 +58,23 @@ export async function getGameState(db: Db, lobbyId: number) {
     return prev;
   }, []);
 
-  return turnsFlat;
+  const quests = game.draftedQuests.reduce<Quest[]>((prev, curr) => {
+    prev.push({ id: curr.id, playerId: curr.playerId });
+    return prev;
+  }, []);
+
+  const cards = game.player.reduce<Card[]>((prev, curr) => {
+    const c = curr.cardToPlayer.map((cardToPlayer) => {
+      return {
+        id: cardToPlayer.cardId,
+        playerId: cardToPlayer.playerId,
+        color: cardToPlayer.card.color,
+        value: cardToPlayer.card.color,
+      };
+    });
+    prev.concat(c);
+    return prev;
+  }, []);
+
+  return { turns, cards, quests };
 }

@@ -1,5 +1,5 @@
 import { random } from "lodash";
-import { type InitialDb } from "../initiateDb.js";
+import { type InitialDb } from "./drizzle/initiateDb.js";
 
 export async function generateDraftedQuestIds({
   amount,

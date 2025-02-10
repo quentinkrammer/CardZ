@@ -25,18 +25,19 @@ export const gameTable = sqliteTable("games", {
     .references(() => lobbyTable.id)
     .notNull(),
 });
-
 export const gameRelations = relations(gameTable, ({ many, one }) => {
   return {
     lobby: one(lobbyTable, {
       references: [lobbyTable.id],
       fields: [gameTable.lobbyId],
     }),
-    players: many(playerTable),
+    player: many(playerTable),
     turn: many(turnTable),
     draftedQuests: many(draftedQuestTable),
   };
 });
+export type SelectGame = InferSelectModel<typeof gameTable>;
+export type InserGame = InferInsertModel<typeof gameTable>;
 
 export const playerTable = sqliteTable("players", {
   id: int().primaryKey({ autoIncrement: true }),
@@ -68,6 +69,8 @@ export const playerRelations = relations(playerTable, ({ many, one }) => {
 export const questTable = sqliteTable("quests", {
   id: text().primaryKey(),
 });
+export type SelectQuest = InferSelectModel<typeof draftedQuestTable>;
+export type InsertQuest = InferInsertModel<typeof draftedQuestTable>;
 export const questRelations = relations(questTable, ({ many }) => {
   return { draftedQuests: many(draftedQuestTable) };
 });
@@ -156,8 +159,8 @@ export const draftedQuestTable = sqliteTable("draft", {
   turnId: int("turn_id").references(() => turnTable.id),
   isSuccess: int({ mode: "boolean" }),
 });
-export type SelectQuest = InferSelectModel<typeof draftedQuestTable>;
-export type InsertQuest = InferInsertModel<typeof draftedQuestTable>;
+export type SelectDraftedQuest = InferSelectModel<typeof draftedQuestTable>;
+export type InsertDraftedQuest = InferInsertModel<typeof draftedQuestTable>;
 
 export const draftedQuestRelations = relations(draftedQuestTable, ({ one }) => {
   return {
