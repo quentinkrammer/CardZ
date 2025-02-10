@@ -79,3 +79,5 @@ export async function getGameState(db: Db, lobbyId: number) {
 
   return { turns, cards, quests };
 }
+
+export type GameState = ReturnType<typeof getGameState>;
