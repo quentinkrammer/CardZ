@@ -22,6 +22,7 @@ type Card = SelectCard & { playerId: SelectPlayer["id"] };
 type Quest = Pick<SelectDraftedQuest, "id" | "playerId">;
 
 export async function getGameState(db: Db, lobbyId: number) {
+  // TODO: limit query to the required columns
   const game = await db.query.gameTable.findFirst({
     where: eq(gameTable.lobbyId, lobbyId),
     orderBy: [desc(gameTable.id)],
