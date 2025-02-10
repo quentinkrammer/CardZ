@@ -7,7 +7,7 @@ export const usersTable = sqliteTable("users", {
   name: text().notNull(),
 });
 export const userRelations = relations(usersTable, ({ many }) => {
-  return { players: many(playerTable) };
+  return { players: many(playerTable), lobbyToUser: many(lobbyToUserTable) };
 });
 
 export const lobbyTable = sqliteTable("lobby", {
@@ -16,7 +16,7 @@ export const lobbyTable = sqliteTable("lobby", {
     .$defaultFn(() => nanoid()),
 });
 export const lobbyRelations = relations(lobbyTable, ({ many }) => {
-  return { games: many(gameTable) };
+  return { games: many(gameTable), lobbyToUser: many(lobbyToUserTable) };
 });
 
 export const gameTable = sqliteTable("games", {
@@ -198,6 +198,28 @@ export const cardToPlayerRelations = relations(cardToPlayerTable, ({ one }) => {
     card: one(cardTable, {
       references: [cardTable.id],
       fields: [cardToPlayerTable.cardId],
+    }),
+  };
+});
+
+export const lobbyToUserTable = sqliteTable("lobby_to_user", {
+  id: int().primaryKey({ autoIncrement: true }),
+  lobbyId: int("lobby_id")
+    .references(() => lobbyTable.id)
+    .notNull(),
+  userId: int("user_id")
+    .references(() => usersTable.id)
+    .notNull(),
+});
+export const lobbyToUserRelations = relations(lobbyToUserTable, ({ one }) => {
+  return {
+    user: one(usersTable, {
+      references: [usersTable.id],
+      fields: [lobbyToUserTable.userId],
+    }),
+    lobby: one(lobbyTable, {
+      references: [lobbyTable.id],
+      fields: [lobbyToUserTable.lobbyId],
     }),
   };
 });
