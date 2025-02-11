@@ -1,27 +1,27 @@
 import { TRPCError } from "@trpc/server";
 import { desc, eq } from "drizzle-orm";
 import { pick } from "../../utils/pick.js";
-import { type Db } from "../drizzle.js";
+import { db } from "../drizzle.js";
 import {
   gameTable,
   SelectCard,
   SelectComunication,
   SelectDraftedQuest,
+  SelectLobby,
   SelectPlayer,
-  SelectQuest,
 } from "../schema.js";
 
 type Turn = {
   card: SelectCard;
   communications: Array<Pick<SelectComunication, "index" | "cardId" | "type">>;
-  quests: Array<Pick<SelectQuest, "questId" | "isSuccess">>;
+  quests: Array<Pick<SelectDraftedQuest, "questId" | "isSuccess">>;
   playerId: SelectPlayer["id"];
   playedCardNumber: number;
 };
 type Card = SelectCard & { playerId: SelectPlayer["id"] };
 type Quest = Pick<SelectDraftedQuest, "id" | "playerId">;
 
-export async function getGameState(db: Db, lobbyId: number) {
+export async function getGameState(lobbyId: SelectLobby["id"]) {
   // TODO: limit query to the required columns
   const game = await db.query.gameTable.findFirst({
     where: eq(gameTable.lobbyId, lobbyId),
@@ -32,7 +32,7 @@ export async function getGameState(db: Db, lobbyId: number) {
         with: {
           communications: true,
           draftedQuests: true,
-          card: { with: { cardToPlayer: { with: { player: true } } } },
+          card: { with: { cardToPlayer: true } },
         },
       },
       draftedQuests: true,
@@ -70,7 +70,7 @@ export async function getGameState(db: Db, lobbyId: number) {
         id: cardToPlayer.cardId,
         playerId: cardToPlayer.playerId,
         color: cardToPlayer.card.color,
-        value: cardToPlayer.card.color,
+        value: cardToPlayer.card.value,
       };
     });
     prev.concat(c);

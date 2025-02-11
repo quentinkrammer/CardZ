@@ -3,8 +3,14 @@ import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { nanoid } from "nanoid";
 
 export const usersTable = sqliteTable("users", {
-  id: int().primaryKey(),
-  name: text().notNull(),
+  id: text().primaryKey(),
+  name: text()
+    .notNull()
+    .$defaultFn(() => {
+      const random = Math.floor(Math.random() * 10e3);
+      if (random < 5e3) return `John_${random}`;
+      return `Jane_${random}`;
+    }),
 });
 export const userRelations = relations(usersTable, ({ many }) => {
   return { players: many(playerTable), lobbyToUser: many(lobbyToUserTable) };
@@ -25,7 +31,7 @@ export type InsertLobby = InferInsertModel<typeof lobbyTable>;
 
 export const gameTable = sqliteTable("games", {
   id: int().primaryKey({ autoIncrement: true }),
-  lobbyId: int("lobby_id")
+  lobbyId: text("lobby_id")
     .references(() => lobbyTable.id)
     .notNull(),
 });
@@ -45,7 +51,7 @@ export type InserGame = InferInsertModel<typeof gameTable>;
 
 export const playerTable = sqliteTable("players", {
   id: int().primaryKey({ autoIncrement: true }),
-  number: text().notNull(),
+  number: int().notNull(),
   userId: int("user_id")
     .references(() => usersTable.id)
     .notNull(),
@@ -73,11 +79,11 @@ export const playerRelations = relations(playerTable, ({ many, one }) => {
 export const questTable = sqliteTable("quests", {
   id: text().primaryKey(),
 });
-export type SelectQuest = InferSelectModel<typeof draftedQuestTable>;
-export type InsertQuest = InferInsertModel<typeof draftedQuestTable>;
 export const questRelations = relations(questTable, ({ many }) => {
   return { draftedQuests: many(draftedQuestTable) };
 });
+export type SelectQuest = InferSelectModel<typeof questTable>;
+export type InsertQuest = InferInsertModel<typeof questTable>;
 
 export const cardTable = sqliteTable("cards", {
   id: int().primaryKey({ autoIncrement: true }),
@@ -154,7 +160,7 @@ export const draftedQuestTable = sqliteTable("draft", {
   gameId: int("game_id")
     .references(() => gameTable.id)
     .notNull(),
-  questId: int("quest_id")
+  questId: text("quest_id")
     .references(() => questTable.id)
     .notNull(),
   // This is dangerously bad. Technically a 'drafted-quest' could be assigned to a player,
@@ -208,6 +214,8 @@ export const cardToPlayerRelations = relations(cardToPlayerTable, ({ one }) => {
     }),
   };
 });
+export type SelectCardToPlayer = InferSelectModel<typeof cardToPlayerTable>;
+export type InsertCardToPlayer = InferInsertModel<typeof cardToPlayerTable>;
 
 export const lobbyToUserTable = sqliteTable("lobby_to_user", {
   id: int().primaryKey({ autoIncrement: true }),
