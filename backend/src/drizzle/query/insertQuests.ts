@@ -6,7 +6,7 @@ const colors: InsertCard["color"][] = ["red", "orange", "green", "blue"];
 
 export async function insertQuests() {
   const baseQuests = colors.flatMap((color) =>
-    range(35).map((index) => ({ id: `${color}-${index + 1}` }))
+    range(9).map((index) => ({ id: `${color}-${index + 1}` }))
   );
 
   const quests = await db.insert(questTable).values(baseQuests).returning();

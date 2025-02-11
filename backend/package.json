@@ -6,11 +6,12 @@
   "scripts": {
     "dev": "vite-node --mode development --watch src/index.ts",
     "stylefix": "prettier ./src --write --config ../.prettierrc.cjs",
-    "test": "vitest --mode development run",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate --config drizzle.production.config.ts",
     "db:migrate": "drizzle-kit migrate --config drizzle.production.config.ts",
     "db:push": "drizzle-kit push --config drizzle.development.config.ts",
+    "db:push:test": "drizzle-kit push --config drizzle.test.config.ts",
     "db:studio": "drizzle-kit studio --config drizzle.development.config.ts"
   },
   "devDependencies": {

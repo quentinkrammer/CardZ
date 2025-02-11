@@ -6,12 +6,12 @@ const colors: InsertCard["color"][] = ["red", "orange", "green", "blue"];
 
 export async function insertCards() {
   const baseCards = colors.flatMap((color) =>
-    range(9).map((number) => ({ color, value: `${number}` }))
+    range(9).map((number) => ({ color, value: `${number + 1}` }))
   );
 
-  const trumpCards = range(3).map((number) => ({
+  const trumpCards = range(4).map((number) => ({
     color: "black" as const,
-    value: `${number}`,
+    value: `${number + 1}`,
   }));
 
   const cards = await db
