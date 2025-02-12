@@ -50,7 +50,7 @@ export async function getGameState(lobbyId: SelectLobby["id"]) {
       playedCardNumber: index,
       // TODO throw error if playerId does not exist
       playerId: card.cardToPlayer[0]!.playerId,
-      card: card,
+      card: pick(card, "id", "color", "value"),
       communications: communications.map((com) =>
         pick(com, "index", "cardId", "type")
       ),
@@ -77,7 +77,7 @@ export async function getGameState(lobbyId: SelectLobby["id"]) {
     return prev;
   }, []);
 
-  return { turns, cards, quests };
+  return { turns, cards, quests, gameId: game.id };
 }
 
-export type GameState = ReturnType<typeof getGameState>;
+export type GameState = Awaited<ReturnType<typeof getGameState>>;
