@@ -1,11 +1,11 @@
 import { db } from "../drizzle.js";
 import { InsertLobbyToUser, lobbyToUserTable } from "../schema.js";
 
-export async function joinLobby({ lobbyId, userId }: InsertLobbyToUser) {
+export async function joinLobby(...userAndLobbyId: InsertLobbyToUser[]) {
   const inserted = await db
     .insert(lobbyToUserTable)
-    .values({ lobbyId, userId })
+    .values(userAndLobbyId)
     .returning();
 
-  return inserted[0]!;
+  return inserted;
 }

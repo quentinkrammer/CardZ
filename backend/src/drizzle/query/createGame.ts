@@ -72,9 +72,9 @@ export async function createGame(
       playerId: player.id,
     }));
   });
-  assignCards(...cards);
+  await assignCards(...cards);
 
-  db.insert(draftedQuestTable).values(
-    draftedQuests.map((quest) => ({ gameId, questId: quest.id }))
-  );
+  await db
+    .insert(draftedQuestTable)
+    .values(draftedQuests.map((quest) => ({ gameId, questId: quest.id })));
 }

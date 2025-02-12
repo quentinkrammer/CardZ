@@ -52,7 +52,7 @@ export type InserGame = InferInsertModel<typeof gameTable>;
 export const playerTable = sqliteTable("players", {
   id: int().primaryKey({ autoIncrement: true }),
   number: int().notNull(),
-  userId: int("user_id")
+  userId: text("user_id")
     .references(() => usersTable.id)
     .notNull(),
   gameId: int("game_id")
@@ -155,7 +155,7 @@ export const communicationRelations = relations(
   }
 );
 
-export const draftedQuestTable = sqliteTable("draft", {
+export const draftedQuestTable = sqliteTable("drafted_quest", {
   id: int().primaryKey({ autoIncrement: true }),
   gameId: int("game_id")
     .references(() => gameTable.id)
@@ -222,7 +222,7 @@ export const lobbyToUserTable = sqliteTable("lobby_to_user", {
   lobbyId: text("lobby_id")
     .references(() => lobbyTable.id)
     .notNull(),
-  userId: int("user_id")
+  userId: text("user_id")
     .references(() => usersTable.id)
     .notNull(),
 });
