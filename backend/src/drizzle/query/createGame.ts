@@ -26,7 +26,11 @@ export async function createGame(
     where: eq(lobbyTable.id, lobbyId),
     with: {
       lobbyToUser: { columns: { userId: true } },
-      games: { orderBy: [desc(gameTable.id)], limit: 1, with: { turn: true } },
+      games: {
+        orderBy: [desc(gameTable.id)],
+        limit: 1,
+        with: { turn: true, player: { columns: { id: true } } },
+      },
     },
   });
 
@@ -45,7 +49,10 @@ export async function createGame(
     });
 
   const hasPriorGame = lobby.games.length > 0;
-  const priorGameIsOngoing = lobby.games[0]?.turn.length ?? NaN < 40;
+  const priorGame = lobby.games[1];
+  const priorGamePlayerCount = priorGame?.player.length || NaN;
+  const priorGameIsOngoing =
+    priorGame?.turn.length !== Math.floor(40 / priorGamePlayerCount);
   if (hasPriorGame && priorGameIsOngoing)
     throw new TRPCError({
       code: "BAD_REQUEST",
