@@ -31,6 +31,16 @@ describe("createGame", () => {
       });
     }
     const res2 = await getGameState(lobbyId);
-    console.log(JSON.stringify(res2));
+    await createGame({ lobbyId, numberOfQuests: 2 }, { cards, quests });
+    const res3 = await getGameState(lobbyId);
+    const hands2 = groupBy(res3.cards, (card) => card.playerId);
+    for (let i = 0; i < Math.floor(40 / users.length) - 10; i++) {
+      Object.values(hands2).forEach(async (hand) => {
+        await playCard({ cardId: hand[i]!.id, gameId: res3.gameId });
+      });
+    }
+    const res4 = await getGameState(lobbyId);
+    console.log("Turn count: ", res4.turns.length);
+    console.log(JSON.stringify(res4));
   });
 });

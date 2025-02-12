@@ -49,10 +49,11 @@ export async function createGame(
     });
 
   const hasPriorGame = lobby.games.length > 0;
-  const priorGame = lobby.games[1];
+  const priorGame = lobby.games[0];
   const priorGamePlayerCount = priorGame?.player.length || NaN;
   const priorGameIsOngoing =
-    priorGame?.turn.length !== Math.floor(40 / priorGamePlayerCount);
+    priorGame?.turn.length !==
+    Math.floor(40 / priorGamePlayerCount) * priorGamePlayerCount;
   if (hasPriorGame && priorGameIsOngoing)
     throw new TRPCError({
       code: "BAD_REQUEST",
