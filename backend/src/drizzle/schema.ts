@@ -206,7 +206,7 @@ export const cardToPlayerRelations = relations(cardToPlayerTable, ({ one }) => {
   return {
     player: one(playerTable, {
       references: [playerTable.id],
-      fields: [cardToPlayerTable.cardId],
+      fields: [cardToPlayerTable.playerId],
     }),
     card: one(cardTable, {
       references: [cardTable.id],

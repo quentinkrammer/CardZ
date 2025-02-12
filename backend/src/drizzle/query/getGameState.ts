@@ -65,7 +65,7 @@ export async function getGameState(lobbyId: SelectLobby["id"]) {
   }, []);
 
   const cards = game.player.reduce<Card[]>((prev, curr) => {
-    const c = curr.cardToPlayer.map((cardToPlayer) => {
+    const cardsOfPlayer = curr.cardToPlayer.map((cardToPlayer) => {
       return {
         id: cardToPlayer.cardId,
         playerId: cardToPlayer.playerId,
@@ -73,7 +73,7 @@ export async function getGameState(lobbyId: SelectLobby["id"]) {
         value: cardToPlayer.card.value,
       };
     });
-    prev.concat(c);
+    prev.push(...cardsOfPlayer);
     return prev;
   }, []);
 
