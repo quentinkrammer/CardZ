@@ -4,11 +4,14 @@ import { pick } from "../../utils/pick.js";
 import { db } from "../drizzle.js";
 import {
   gameTable,
+  lobbyTable,
   SelectCard,
   SelectComunication,
   SelectDraftedQuest,
+  SelectGame,
   SelectLobby,
   SelectPlayer,
+  SelectUser,
 } from "../schema.js";
 
 type Turn = {
@@ -20,14 +23,32 @@ type Turn = {
 };
 type Card = SelectCard & { playerId: SelectPlayer["id"] };
 type Quest = Pick<SelectDraftedQuest, "id" | "playerId">;
+type User = Pick<SelectUser, "name"> & { userId: SelectUser["id"] };
 
-export async function getGameState(lobbyId: SelectLobby["id"]) {
+export type GameState = {
+  users: User[];
+  quests: Quest[];
+  cards: Card[];
+  turns: Turn[];
+  lobbyId: SelectLobby["id"];
+  gameId?: SelectGame["id"];
+};
+
+export async function getGameState(
+  lobbyId: SelectLobby["id"]
+): Promise<GameState> {
   // TODO: limit query to the required columns
   const game = await db.query.gameTable.findFirst({
     where: eq(gameTable.lobbyId, lobbyId),
     orderBy: [desc(gameTable.id)],
     with: {
-      player: { with: { cardToPlayer: { with: { card: true } } } },
+      player: {
+        with: {
+          cardToPlayer: {
+            with: { card: true, player: { with: { user: true } } },
+          },
+        },
+      },
       turn: {
         with: {
           communications: true,
@@ -38,11 +59,29 @@ export async function getGameState(lobbyId: SelectLobby["id"]) {
       draftedQuests: true,
     },
   });
-  if (!game)
-    throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: `No game with lobby Id "${lobbyId}" found.`,
+  if (!game) {
+    const lobby = await db.query.lobbyTable.findFirst({
+      where: eq(lobbyTable.id, lobbyId),
+      with: { lobbyToUser: { with: { user: true } } },
     });
+
+    if (!lobby)
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: `No game with lobby Id "${lobbyId}" found.`,
+      });
+
+    return {
+      lobbyId,
+      users: lobby.lobbyToUser.map<User>((lobbyToUser) => ({
+        userId: lobbyToUser.userId,
+        name: lobbyToUser.user.name,
+      })),
+      turns: [],
+      cards: [],
+      quests: [],
+    };
+  }
 
   const turns = game.turn.reduce<Turn[]>((prev, curr, index) => {
     const { card, communications, draftedQuests } = curr;
@@ -77,7 +116,11 @@ export async function getGameState(lobbyId: SelectLobby["id"]) {
     return prev;
   }, []);
 
-  return { turns, cards, quests, gameId: game.id };
-}
+  const users = game.player.reduce<User[]>((prev, curr) => {
+    const user = curr.cardToPlayer[0]!.player.user;
+    prev.push({ userId: user.id, name: user.name });
+    return prev;
+  }, []);
 
-export type GameState = Awaited<ReturnType<typeof getGameState>>;
+  return { turns, cards, quests, gameId: game.id, lobbyId, users };
+}
