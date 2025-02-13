@@ -21,13 +21,13 @@ await joinLobby(...users.map((user) => ({ userId: user.id, lobbyId })));
 describe("createGame", () => {
   beforeEach(async () => {});
 
-  test("test", async () => {
+  test("lobby with 2 games", async () => {
     await createGame({ lobbyId, numberOfQuests: 1 }, { cards, quests });
     const res = await getGameState(lobbyId);
     const hands = groupBy(res.cards, (card) => card.playerId);
     for (let i = 0; i < Math.floor(40 / users.length); i++) {
       Object.values(hands).forEach(async (hand) => {
-        await playCard({ cardId: hand[i]!.id, gameId: res.gameId });
+        await playCard({ cardId: hand[i]!.id, gameId: res.gameId! });
       });
     }
     const res2 = await getGameState(lobbyId);
@@ -36,11 +36,21 @@ describe("createGame", () => {
     const hands2 = groupBy(res3.cards, (card) => card.playerId);
     for (let i = 0; i < Math.floor(40 / users.length) - 10; i++) {
       Object.values(hands2).forEach(async (hand) => {
-        await playCard({ cardId: hand[i]!.id, gameId: res3.gameId });
+        await playCard({ cardId: hand[i]!.id, gameId: res3.gameId! });
       });
     }
     const res4 = await getGameState(lobbyId);
     console.log("Turn count: ", res4.turns.length);
     console.log(JSON.stringify(res4));
+  });
+
+  test("lobby without games", async () => {
+    const lobbyId = await createLobby();
+    users.forEach(async (user) => {
+      await joinLobby({ lobbyId, userId: user.id });
+    });
+    const lobby = await getGameState(lobbyId);
+
+    console.log(JSON.stringify(lobby));
   });
 });
