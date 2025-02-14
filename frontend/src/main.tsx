@@ -7,9 +7,13 @@ import {
 } from "@trpc/client";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App.tsx";
+import { BrowserRouter, Route, Routes } from "react-router";
+import { App } from "./App.tsx";
 import { env } from "./env.ts";
 import "./index.css";
+import { Game } from "./pages/Game.tsx";
+import { Lobby } from "./pages/Lobby.tsx";
+import Root from "./pages/Root.tsx";
 import { trpc } from "./trpc.ts";
 
 const queryClient = new QueryClient();
@@ -43,10 +47,24 @@ const trpcClient = trpc.createClient({
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    </trpc.Provider>
+    <BrowserRouter>
+      <trpc.Provider client={trpcClient} queryClient={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          <Router />
+        </QueryClientProvider>
+      </trpc.Provider>
+    </BrowserRouter>
   </StrictMode>,
 );
+
+export function Router() {
+  return (
+    <Routes>
+      <Route element={<App />}>
+        <Route path="/" element={<Root />} />
+        <Route path="lobby/:lobbyId" element={<Lobby />} loader={() => 42} />
+        <Route path="lobby/:lobbyId/game" element={<Game />} />
+      </Route>
+    </Routes>
+  );
+}
