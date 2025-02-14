@@ -1,11 +1,7 @@
-import { useTestQuery } from "../query/useTestQuery";
-import { trpc } from "../trpc";
-import { useGameSubscription } from "../useGameSubscription";
-
-function Root() {
-  const { data } = useTestQuery();
-  const playCard = trpc.game.playCard.useMutation();
-  const sub = useGameSubscription();
+export function Root() {
+  // const { data } = useTestQuery();
+  // const playCard = trpc.game.playCard.useMutation();
+  // const sub = useLobbySubscription();
 
   return (
     <>

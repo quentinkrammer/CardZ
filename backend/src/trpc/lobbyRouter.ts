@@ -9,15 +9,10 @@ const subscriptionUrl = (obj: { lobbyId: string; userId: string }) =>
   `lobby/${obj.lobbyId}/user/${obj.userId}`;
 
 export const lobbyRouter = t.router({
-  createLobby: authedProcedure.subscription(async function* ({
-    ctx: { userId },
-  }) {
+  createLobby: authedProcedure.mutation(async () => {
     const lobbyId = await createLobby();
-    await joinLobby({ lobbyId, userId });
 
-    for await (const [data] of on(ee, subscriptionUrl({ lobbyId, userId }))) {
-      yield data;
-    }
+    return { lobbyId };
   }),
   joinLobby: authedProcedure
     .input(z.object({ lobbyId: z.string() }))
