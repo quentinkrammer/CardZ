@@ -2,13 +2,12 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { env } from "../env";
 import { useLobbySubscription } from "../hooks/useGameSubscription";
-import { useUsersStore } from "../hooks/useLobbyStore";
 import { useLobbyId } from "../hooks/useUrlParams";
 import { trpc } from "../trpc";
 
 export function Lobby() {
   useLobbySubscription();
-  const users = useUsersStore();
+  // const users = useUsersStore();
   const lobbyId = useLobbyId();
   const leaveLobby = trpc.lobby.leaveLobby.useMutation();
 
@@ -16,7 +15,7 @@ export function Lobby() {
 
   useEffect(() => {
     return () => leaveLobby.mutate({ lobbyId });
-  }, [leaveLobby, lobbyId]);
+  }, []);
 
   const onLeave = () => {
     leaveLobby.mutate({ lobbyId });
@@ -27,7 +26,7 @@ export function Lobby() {
     <>
       <button onClick={onLeave}>leave lobby</button>
       <div>Invite player: {`${env.url}/lobby/${lobbyId}`}</div>
-      <div>User: {users.map((user) => user)}</div>
+      {/* <div>User: {users.map((user) => user)}</div> */}
     </>
   );
 }

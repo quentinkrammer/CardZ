@@ -13,7 +13,8 @@
     "db:migrate": "drizzle-kit migrate --config drizzle.production.config.ts",
     "db:push": "drizzle-kit push --config drizzle.development.config.ts",
     "db:push:test": "drizzle-kit push --config drizzle.test.config.ts",
-    "db:studio": "drizzle-kit studio --config drizzle.development.config.ts"
+    "db:studio": "drizzle-kit studio --config drizzle.development.config.ts",
+    "db:ini": "rimraf db.development.sqlite && pnpm db:push && vite-node src/fillDb.ts"
   },
   "devDependencies": {
     "@types/connect": "^3.4.38",
