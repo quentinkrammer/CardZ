@@ -1,6 +1,7 @@
 import { on } from "node:events";
 import { z } from "zod";
 import { createLobby } from "../drizzle/query/createLobby.js";
+import { getGameState } from "../drizzle/query/getGameState.js";
 import { joinLobby } from "../drizzle/query/joinLobby.js";
 import { leaveLobby } from "../drizzle/query/leaveLobby.js";
 import { authedProcedure, ee, t } from "./trpc.js";
@@ -18,6 +19,9 @@ export const lobbyRouter = t.router({
     .input(z.object({ lobbyId: z.string() }))
     .subscription(async function* ({ ctx: { userId }, input: { lobbyId } }) {
       await joinLobby({ lobbyId, userId });
+      const gameState = await getGameState(lobbyId);
+
+      yield gameState;
 
       for await (const [data] of on(ee, subscriptionUrl({ lobbyId, userId }))) {
         yield data;
@@ -27,6 +31,9 @@ export const lobbyRouter = t.router({
     .input(z.object({ lobbyId: z.string() }))
     .mutation(async ({ input: { lobbyId }, ctx: { userId } }) => {
       await leaveLobby({ lobbyId, userId });
-      ee.removeAllListeners(subscriptionUrl({ lobbyId, userId }));
+      const gameState = await getGameState(lobbyId);
+      const eventName = subscriptionUrl({ lobbyId, userId });
+      ee.removeAllListeners(eventName);
+      ee.emit(eventName, gameState);
     }),
 });

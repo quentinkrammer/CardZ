@@ -5,3 +5,5 @@ export function useUrlParams() {
   const params = useParams();
   return z.object({ lobbyId: z.string() }).parse(params);
 }
+
+export const useLobbyId = () => useUrlParams().lobbyId;

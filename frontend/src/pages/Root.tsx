@@ -1,22 +1,19 @@
+import { useNavigate } from "react-router";
+import { trpc } from "../trpc";
+
 export function Root() {
-  // const { data } = useTestQuery();
-  // const playCard = trpc.game.playCard.useMutation();
-  // const sub = useLobbySubscription();
+  const createLobby = trpc.lobby.createLobby.useMutation();
+  const navigate = useNavigate();
+
+  const onCreate = async () => {
+    const { lobbyId } = await createLobby.mutateAsync();
+    navigate(`/lobby/${lobbyId}`);
+  };
 
   return (
     <>
       Home
-      {/* <div>Name: {data?.input}</div>
-      <div>ID: {data?.context.userId}</div>
-      <button onClick={() => playCard.mutate()}>Play Card</button> */}
-      {/* {result.status === "error" && (
-        <button onClick={() => result.reset()}>
-          Something went wrong - restart the subscription
-        </button>
-      )} */}
-      {/* <div className="h-dvh">
-        <Table />
-      </div> */}
+      <button onClick={onCreate}>create lobby</button>
     </>
   );
 }
