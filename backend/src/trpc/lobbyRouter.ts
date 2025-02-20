@@ -18,10 +18,17 @@ export const lobbyRouter = t.router({
   joinLobby: authedProcedure
     .input(z.object({ lobbyId: z.string() }))
     .subscription(async function* ({ ctx: { userId }, input: { lobbyId } }) {
-      await joinLobby({ lobbyId, userId });
-      const gameState = await getGameState(lobbyId);
+      const lobbyTouser = await joinLobby({ lobbyId, userId });
 
+      const gameState = await getGameState(lobbyId);
       yield gameState;
+
+      const usersInLobby = gameState.users.filter(
+        (user) => user.userId !== userId
+      );
+      usersInLobby.forEach((user) => {
+        ee.emit(subscriptionUrl({ lobbyId, userId: user.userId }), gameState);
+      });
 
       for await (const [data] of on(ee, subscriptionUrl({ lobbyId, userId }))) {
         yield data;
