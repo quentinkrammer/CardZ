@@ -5,6 +5,7 @@ import cors from "cors";
 import jwt from "jsonwebtoken";
 import { nanoid } from "nanoid";
 import { env } from "../env.js";
+import { createUser } from "./drizzle/query/createUser.js";
 import { appRouter } from "./trpc/appRouter.js";
 import { createContext } from "./trpc/trpc.js";
 
@@ -17,19 +18,20 @@ middleware
     cors({
       origin: env.frontendUrl,
       credentials: true,
-    }),
+    })
   )
   .use(function attachUserCookie(req, res, next) {
     const cookies = cookie.parse(req.headers.cookie ?? "");
-    let signedUserId: string;
+    let newUserId: string;
     jwt.verify(
       cookies?.[COOKIE_NAME_USER_ID] ?? "",
       COOKIE_SECRET,
-      function (err, token) {
+      async function (err, token) {
         if (err) {
-          console.log("request has no user ID token");
-          signedUserId = nanoid();
-          const newSignedUserIdToken = jwt.sign(signedUserId, COOKIE_SECRET);
+          newUserId = nanoid();
+          await createUser({ id: newUserId });
+
+          const newSignedUserIdToken = jwt.sign(newUserId, COOKIE_SECRET);
           res.setHeader(
             "Set-Cookie",
             cookie.serialize(COOKIE_NAME_USER_ID, newSignedUserIdToken, {
@@ -38,13 +40,13 @@ middleware
               secure: true,
               sameSite: "lax",
               path: "/",
-            }),
+            })
           );
         }
         // @ts-expect-error the "userId" is added to the req
-        req["userId"] = signedUserId ?? token;
+        req["userId"] = newUserId ?? token;
         next();
-      },
+      }
     );
   });
 
