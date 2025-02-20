@@ -1,5 +1,6 @@
 import { GameState } from "backend";
 import { create } from "zustand";
+import { useShallow } from "zustand/react/shallow";
 import { Omit } from "../types";
 
 export type Lobby = Omit<GameState, "lobbyId" | "gameId">;
@@ -13,8 +14,10 @@ export const useLobbyStore = create<LobbyStore>((set) => ({
 }));
 
 export function useUsersStore() {
-  return useLobbyStore((state) =>
-    sortBy(state.gameState.users, "userId").map((user) => user.name),
+  return useLobbyStore(
+    useShallow((state) =>
+      sortBy(state.gameState.users, "userId").map((user) => user.name),
+    ),
   );
 }
 
