@@ -2,7 +2,7 @@ import { GameState } from "backend";
 import { create } from "zustand";
 import { Omit } from "../types";
 
-type Lobby = Omit<GameState, "lobbyId" | "gameId">;
+export type Lobby = Omit<GameState, "lobbyId" | "gameId">;
 type LobbyStore = {
   gameState: Lobby;
   update: (lobby: Lobby) => void;
