@@ -1,5 +1,5 @@
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
-import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { int, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
 import { nanoid } from "nanoid";
 
 export const usersTable = sqliteTable("users", {
@@ -217,15 +217,21 @@ export const cardToPlayerRelations = relations(cardToPlayerTable, ({ one }) => {
 export type SelectCardToPlayer = InferSelectModel<typeof cardToPlayerTable>;
 export type InsertCardToPlayer = InferInsertModel<typeof cardToPlayerTable>;
 
-export const lobbyToUserTable = sqliteTable("lobby_to_user", {
-  id: int().primaryKey({ autoIncrement: true }),
-  lobbyId: text("lobby_id")
-    .references(() => lobbyTable.id)
-    .notNull(),
-  userId: text("user_id")
-    .references(() => usersTable.id)
-    .notNull(),
-});
+export const lobbyToUserTable = sqliteTable(
+  "lobby_to_user",
+  {
+    id: int().primaryKey({ autoIncrement: true }),
+    lobbyId: text("lobby_id")
+      .references(() => lobbyTable.id)
+      .notNull(),
+    userId: text("user_id")
+      .references(() => usersTable.id)
+      .notNull(),
+  },
+  (table) => {
+    return [unique().on(table.lobbyId, table.userId)];
+  }
+);
 export const lobbyToUserRelations = relations(lobbyToUserTable, ({ one }) => {
   return {
     user: one(usersTable, {
