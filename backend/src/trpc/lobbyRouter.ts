@@ -17,7 +17,11 @@ export const lobbyRouter = t.router({
   }),
   joinLobby: authedProcedure
     .input(z.object({ lobbyId: z.string() }))
-    .subscription(async function* ({ ctx: { userId }, input: { lobbyId } }) {
+    .subscription(async function* ({
+      ctx: { userId },
+      input: { lobbyId },
+      signal,
+    }) {
       try {
         await joinLobby({ lobbyId, userId });
       } catch (e) {
@@ -41,7 +45,9 @@ export const lobbyRouter = t.router({
         if (data.userId !== userId) ee.emit(data.subUrl, data.game);
       });
 
-      for await (const [data] of on(ee, subscriptionUrl({ lobbyId, userId }))) {
+      for await (const [data] of on(ee, subscriptionUrl({ lobbyId, userId }), {
+        signal,
+      })) {
         yield data;
       }
     }),
@@ -52,7 +58,7 @@ export const lobbyRouter = t.router({
       const gameState = await getGameState(lobbyId);
 
       iterateGameStateForEachUser(gameState, (data) => {
-        if (data.userId === userId) ee.removeAllListeners(data.subUrl);
+        if (data.userId === userId) return;
         ee.emit(data.subUrl, gameState);
       });
     }),
