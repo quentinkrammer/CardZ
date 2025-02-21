@@ -1,11 +1,11 @@
 import { nanoid } from "nanoid";
 import { describe, expect, test } from "vitest";
-import { initiateDb } from "../initiateDb.js";
+import { insertGamePieces } from "../initiateDb.js";
 import { createLobby } from "./createLobby.js";
 import { createUser } from "./createUser.js";
 import { joinLobby } from "./joinLobby.js";
 
-const {} = await initiateDb();
+const {} = await insertGamePieces();
 const lobbyId = await createLobby();
 const userId = await createUser({ id: nanoid() });
 

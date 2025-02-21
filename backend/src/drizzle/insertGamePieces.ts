@@ -2,7 +2,7 @@ import { db } from "./drizzle.js";
 import { insertCards } from "./query/insertCards.js";
 import { insertQuests } from "./query/insertQuests.js";
 
-export async function initiateDb() {
+export async function insertGamePieces() {
   const cardsOld = await db.query.cardTable.findMany();
   const cards = cardsOld.length > 0 ? cardsOld : await insertCards();
 
@@ -11,4 +11,4 @@ export async function initiateDb() {
 
   return { cards, quests };
 }
-export type InitialDb = Awaited<ReturnType<typeof initiateDb>>;
+export type GamePieces = Awaited<ReturnType<typeof insertGamePieces>>;

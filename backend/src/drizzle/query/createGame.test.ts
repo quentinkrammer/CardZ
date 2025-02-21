@@ -1,6 +1,6 @@
 import { groupBy } from "lodash";
 import { beforeEach, describe, test } from "vitest";
-import { initiateDb } from "../initiateDb.js";
+import { insertGamePieces } from "../initiateDb.js";
 import { createGame } from "./createGame.js";
 import { createLobby } from "./createLobby.js";
 import { createUser } from "./createUser.js";
@@ -8,7 +8,7 @@ import { getLatestGameOfLobby } from "./getLatestGameOfLobby.js";
 import { joinLobby } from "./joinLobby.js";
 import { playCard } from "./playCard.js";
 
-const { cards, quests } = await initiateDb();
+const { cards, quests } = await insertGamePieces();
 const lobbyId = await createLobby();
 const users = [
   { id: "user1", name: "John1" },

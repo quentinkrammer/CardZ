@@ -3,7 +3,6 @@ import { db } from "../drizzle/drizzle.js";
 import { usersTable } from "../drizzle/schema.js";
 import { appRouter } from "./appRouter.js";
 import { t } from "./trpc.js";
-
 const createCaller = t.createCallerFactory(appRouter);
 const caller = createCaller({ userId: "42", db });
 

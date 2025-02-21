@@ -24,9 +24,12 @@ type Turn = {
 type Card = SelectCard & { playerId: SelectPlayer["id"] };
 type Quest = Pick<SelectDraftedQuest, "id" | "playerId" | "isSuccess">;
 type User = Pick<SelectUser, "name"> & { userId: SelectUser["id"] };
+type Player = Pick<SelectPlayer, "number" | "userId"> & {
+  playerId: SelectPlayer["id"];
+};
 
 export type GameState = {
-  players: User[];
+  players: Player[];
   users: User[];
   quests: Quest[];
   cards: Card[];
@@ -117,9 +120,13 @@ export async function getLatestGameOfLobby(
     }, []) ?? [];
 
   const players =
-    game?.player.reduce<User[]>((prev, curr) => {
-      const user = curr.cardToPlayer[0]!.player.user;
-      prev.push({ userId: user.id, name: user.name });
+    game?.player.reduce<Player[]>((prev, curr) => {
+      const player = curr.cardToPlayer[0]!.player;
+      prev.push({
+        userId: player.userId,
+        playerId: player.id,
+        number: player.number,
+      });
       return prev;
     }, []) ?? [];
 

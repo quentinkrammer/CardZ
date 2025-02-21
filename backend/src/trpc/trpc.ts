@@ -2,13 +2,13 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
 import EventEmitter from "node:events";
 import { z } from "zod";
-import { db } from "../drizzle/drizzle.js";
+import { db, gamePieces } from "../drizzle/drizzle.js";
 
 const userIdSchema = z.object({ userId: z.string() });
 
 export const createContext = ({ req }: CreateHTTPContextOptions) => {
   const { data } = userIdSchema.safeParse(req);
-  return { userId: data?.userId, db };
+  return { userId: data?.userId, db, gamePieces };
 };
 type Context = Awaited<ReturnType<typeof createContext>>;
 
@@ -30,7 +30,7 @@ export const authedProcedure = t.procedure.use(async function isAuthed(opts) {
   const { ctx } = opts;
   if (!ctx.userId) throw new TRPCError({ code: "UNAUTHORIZED" });
   return opts.next({
-    ctx: { userId: ctx.userId, db: ctx.db },
+    ctx: { userId: ctx.userId, db: ctx.db, gamePieces: ctx.gamePieces },
   });
 });
 

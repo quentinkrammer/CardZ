@@ -9,7 +9,7 @@ type LobbyStore = {
   update: (lobby: Lobby) => void;
 };
 export const useLobbyStore = create<LobbyStore>((set) => ({
-  gameState: { cards: [], quests: [], turns: [], users: [] },
+  gameState: { cards: [], quests: [], turns: [], users: [], players: [] },
   update: (lobby) => set({ gameState: lobby }),
 }));
 

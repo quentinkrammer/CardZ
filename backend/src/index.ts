@@ -53,7 +53,7 @@ middleware
 const server = createHTTPServer({
   middleware,
   router: appRouter,
-  createContext: createContext,
+  createContext,
 });
 
 server.listen(env.port);

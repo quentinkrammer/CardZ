@@ -3,25 +3,21 @@ import { isNil, isNull } from "lodash";
 import { distribute } from "../../distribute.js";
 import { shuffle } from "../../shuffle.js";
 import { db } from "../drizzle.js";
-import {
-  draftedQuestTable,
-  gameTable,
-  SelectCard,
-  SelectLobby,
-  SelectQuest,
-} from "../schema.js";
+import { GamePieces } from "../insertGamePieces.js";
+import { draftedQuestTable, gameTable, SelectLobby } from "../schema.js";
 import { assignCards } from "./assignCards.js";
 import { getLatestGameOfLobby } from "./getLatestGameOfLobby.js";
 import { registerPlayer } from "./registerPlayer.js";
 
-type GameContext = { cards: SelectCard[]; quests: SelectQuest[] };
-export async function createGame(
-  {
-    lobbyId,
-    numberOfQuests,
-  }: { lobbyId: SelectLobby["id"]; numberOfQuests: number },
-  context: GameContext
-) {
+export async function createGame({
+  lobbyId,
+  numberOfQuests,
+  gamePieces,
+}: {
+  lobbyId: SelectLobby["id"];
+  numberOfQuests: number;
+  gamePieces: GamePieces;
+}) {
   const gameState = await getLatestGameOfLobby(lobbyId);
 
   const users = gameState.users;
@@ -43,8 +39,8 @@ export async function createGame(
       message: `Cannot create new game. The game with Id "${gameState.gameId}" is still ongoing inside lobby with Id ${lobbyId}.`,
     });
 
-  const shuffeledCards = distribute(shuffle(context.cards), playerCount);
-  const draftedQuests = shuffle(context.quests).slice(0, numberOfQuests);
+  const shuffeledCards = distribute(shuffle(gamePieces.cards), playerCount);
+  const draftedQuests = shuffle(gamePieces.quests).slice(0, numberOfQuests);
 
   const gameId = (
     await db.insert(gameTable).values({ lobbyId }).returning()

@@ -1,12 +1,12 @@
 import { random } from "lodash";
-import { type InitialDb } from "./drizzle/initiateDb.js";
+import { type GamePieces } from "./drizzle/insertGamePieces.js";
 
 export async function generateDraftedQuestIds({
   amount,
   initialQuests,
 }: {
   amount: number;
-  initialQuests: InitialDb["quests"];
+  initialQuests: GamePieces["quests"];
 }) {
   const draftedQuests = new Set<string>();
   while (draftedQuests.size < amount) {
