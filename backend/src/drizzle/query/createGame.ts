@@ -1,17 +1,17 @@
 import { TRPCError } from "@trpc/server";
-import { desc, eq } from "drizzle-orm";
+import { isNil, isNull } from "lodash";
 import { distribute } from "../../distribute.js";
 import { shuffle } from "../../shuffle.js";
 import { db } from "../drizzle.js";
 import {
   draftedQuestTable,
   gameTable,
-  lobbyTable,
   SelectCard,
   SelectLobby,
   SelectQuest,
 } from "../schema.js";
 import { assignCards } from "./assignCards.js";
+import { getLatestGameOfLobby } from "./getLatestGameOfLobby.js";
 import { registerPlayer } from "./registerPlayer.js";
 
 type GameContext = { cards: SelectCard[]; quests: SelectQuest[] };
@@ -22,25 +22,9 @@ export async function createGame(
   }: { lobbyId: SelectLobby["id"]; numberOfQuests: number },
   context: GameContext
 ) {
-  const lobby = await db.query.lobbyTable.findFirst({
-    where: eq(lobbyTable.id, lobbyId),
-    with: {
-      lobbyToUser: { columns: { userId: true } },
-      games: {
-        orderBy: [desc(gameTable.id)],
-        limit: 1,
-        with: { turn: true, player: { columns: { id: true } } },
-      },
-    },
-  });
+  const gameState = await getLatestGameOfLobby(lobbyId);
 
-  if (!lobby)
-    throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: `Cannot create new game for this lobby. No lobby with Id "${lobbyId}" found.`,
-    });
-
-  const users = lobby.lobbyToUser;
+  const users = gameState.users;
   const playerCount = users.length;
   if (playerCount < 3 || playerCount > 4)
     throw new TRPCError({
@@ -48,16 +32,15 @@ export async function createGame(
       message: `Cannot create new game. Player count must be 3-4. Current player count is "${playerCount}."`,
     });
 
-  const hasPriorGame = lobby.games.length > 0;
-  const priorGame = lobby.games[0];
-  const priorGamePlayerCount = priorGame?.player.length || NaN;
-  const priorGameIsOngoing =
-    priorGame?.turn.length !==
-    Math.floor(40 / priorGamePlayerCount) * priorGamePlayerCount;
-  if (hasPriorGame && priorGameIsOngoing)
+  const lobbyHasPriorGame = !isNil(gameState.lobbyId);
+  const priorGameIsOngoing = gameState.quests.some((quest) =>
+    isNull(quest.isSuccess)
+  );
+
+  if (lobbyHasPriorGame && priorGameIsOngoing)
     throw new TRPCError({
       code: "BAD_REQUEST",
-      message: `Cannot create new game. The game with Id "${lobby.games[0]?.id}" is still ongoing inside lobby with Id ${lobbyId}.`,
+      message: `Cannot create new game. The game with Id "${gameState.gameId}" is still ongoing inside lobby with Id ${lobbyId}.`,
     });
 
   const shuffeledCards = distribute(shuffle(context.cards), playerCount);

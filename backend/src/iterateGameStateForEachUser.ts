@@ -1,4 +1,4 @@
-import { GameState } from "./drizzle/query/getGameState.js";
+import { GameState } from "./drizzle/query/getLatestGameOfLobby.js";
 import { subscriptionUrl } from "./subscriptionUrl.js";
 
 export function iterateGameStateForEachUser(

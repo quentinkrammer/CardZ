@@ -2,7 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { on } from "node:events";
 import { z } from "zod";
 import { createLobby } from "../drizzle/query/createLobby.js";
-import { getGameState } from "../drizzle/query/getGameState.js";
+import { getLatestGameOfLobby } from "../drizzle/query/getLatestGameOfLobby.js";
 import { joinLobby } from "../drizzle/query/joinLobby.js";
 import { leaveLobby } from "../drizzle/query/leaveLobby.js";
 import { iterateGameStateForEachUser } from "../iterateGameStateForEachUser.js";
@@ -38,7 +38,7 @@ export const lobbyRouter = t.router({
           });
       }
 
-      const gameState = await getGameState(lobbyId);
+      const gameState = await getLatestGameOfLobby(lobbyId);
       yield gameState;
 
       iterateGameStateForEachUser(gameState, (data) => {
@@ -55,7 +55,7 @@ export const lobbyRouter = t.router({
     .input(z.object({ lobbyId: z.string() }))
     .mutation(async ({ input: { lobbyId }, ctx: { userId } }) => {
       await leaveLobby({ lobbyId, userId });
-      const gameState = await getGameState(lobbyId);
+      const gameState = await getLatestGameOfLobby(lobbyId);
 
       iterateGameStateForEachUser(gameState, (data) => {
         if (data.userId === userId) return;
