@@ -72,8 +72,7 @@ export const lobbyRouter = t.router({
       await db
         .update(lobbyTable)
         .set({ questCount })
-        .where(eq(lobbyTable, lobbyId));
-
+        .where(eq(lobbyTable.id, lobbyId));
       const gameState = await getLatestGameOfLobby(lobbyId);
 
       iterateGameStateForEachUser(gameState, (data) => {
