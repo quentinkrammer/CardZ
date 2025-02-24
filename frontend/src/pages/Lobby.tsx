@@ -3,7 +3,6 @@ import { useNavigate } from "react-router";
 import { env } from "../env";
 import { useLobbySubscription } from "../hooks/useGameSubscription";
 import {
-  unsubGameId,
   useGameIsReadyToBeStarted,
   useQuestToBeDraftedCount,
   useUsersStore,
@@ -22,7 +21,6 @@ export function Lobby() {
 
   const onLeave = () => {
     leaveLobby.mutate({ lobbyId });
-    unsubGameId();
     navigate("/");
   };
 
