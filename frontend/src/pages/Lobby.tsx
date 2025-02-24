@@ -3,12 +3,13 @@ import { useNavigate } from "react-router";
 import { env } from "../env";
 import { useLobbySubscription } from "../hooks/useGameSubscription";
 import {
-  useGameIsOngoing,
+  unsubGameId,
   useGameIsReadyToBeStarted,
   useQuestToBeDraftedCount,
   useUsersStore,
 } from "../hooks/useLobbyStore";
 import { useLobbyId } from "../hooks/useUrlParams";
+import { useView } from "../hooks/useView";
 import { trpc } from "../trpc";
 
 export function Lobby() {
@@ -17,14 +18,15 @@ export function Lobby() {
   const lobbyId = useLobbyId();
   const leaveLobby = trpc.lobby.leaveLobby.useMutation();
   const navigate = useNavigate();
-  const gameIsOngoing = useGameIsOngoing();
+  const { view, setView } = useView();
 
   const onLeave = () => {
     leaveLobby.mutate({ lobbyId });
+    unsubGameId();
     navigate("/");
   };
 
-  if (gameIsOngoing) return <Game />;
+  if (view === "game") return <Game />;
   return (
     <>
       <button
