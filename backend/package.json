@@ -14,7 +14,7 @@
     "db:push": "drizzle-kit push --config drizzle.development.config.ts",
     "db:push:test": "drizzle-kit push --config drizzle.test.config.ts",
     "db:studio": "drizzle-kit studio --config drizzle.development.config.ts",
-    "db:ini": "rimraf db.development.sqlite && pnpm db:push && vite-node src/drizzle/insertGamePieces.ts"
+    "db:ini": "rimraf db.development.sqlite && pnpm db:push && vite-node src/drizzle/drizzle.ts"
   },
   "devDependencies": {
     "@types/connect": "^3.4.38",
