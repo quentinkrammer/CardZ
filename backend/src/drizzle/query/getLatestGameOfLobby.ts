@@ -29,6 +29,7 @@ type Player = Pick<SelectPlayer, "number" | "userId"> & {
 };
 
 export type GameState = {
+  questToBeDraftedCount: number;
   players: Player[];
   users: User[];
   quests: Quest[];
@@ -137,5 +138,14 @@ export async function getLatestGameOfLobby(
     return prev;
   }, []);
 
-  return { turns, cards, quests, gameId: game?.id, lobbyId, users, players };
+  return {
+    turns,
+    cards,
+    quests,
+    gameId: game?.id,
+    lobbyId,
+    users,
+    players,
+    questToBeDraftedCount: lobby.questCount,
+  };
 }

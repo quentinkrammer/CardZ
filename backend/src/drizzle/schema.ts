@@ -22,6 +22,7 @@ export const lobbyTable = sqliteTable("lobby", {
   id: text()
     .primaryKey()
     .$defaultFn(() => nanoid()),
+  questCount: int().notNull().default(3),
 });
 export const lobbyRelations = relations(lobbyTable, ({ many }) => {
   return { games: many(gameTable), lobbyToUser: many(lobbyToUserTable) };

@@ -1,10 +1,12 @@
 import { TRPCError } from "@trpc/server";
+import { eq } from "drizzle-orm";
 import { on } from "node:events";
 import { z } from "zod";
 import { createLobby } from "../drizzle/query/createLobby.js";
 import { getLatestGameOfLobby } from "../drizzle/query/getLatestGameOfLobby.js";
 import { joinLobby } from "../drizzle/query/joinLobby.js";
 import { leaveLobby } from "../drizzle/query/leaveLobby.js";
+import { lobbyTable } from "../drizzle/schema.js";
 import { iterateGameStateForEachUser } from "../iterateGameStateForEachUser.js";
 import { subscriptionUrl } from "../subscriptionUrl.js";
 import { authedProcedure, ee, t } from "./trpc.js";
@@ -59,6 +61,22 @@ export const lobbyRouter = t.router({
 
       iterateGameStateForEachUser(gameState, (data) => {
         if (data.userId === userId) return;
+        ee.emit(data.subUrl, gameState);
+      });
+    }),
+  setQuestCount: authedProcedure
+    .input(
+      z.object({ lobbyId: z.string(), questCount: z.number().gt(0).lte(8) })
+    )
+    .mutation(async ({ input: { lobbyId, questCount }, ctx: { db } }) => {
+      await db
+        .update(lobbyTable)
+        .set({ questCount })
+        .where(eq(lobbyTable, lobbyId));
+
+      const gameState = await getLatestGameOfLobby(lobbyId);
+
+      iterateGameStateForEachUser(gameState, (data) => {
         ee.emit(data.subUrl, gameState);
       });
     }),

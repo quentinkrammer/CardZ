@@ -1,4 +1,5 @@
 import { GameState } from "backend";
+import { isNil } from "lodash";
 import { create } from "zustand";
 import { useShallow } from "zustand/react/shallow";
 import { Omit } from "../types";
@@ -9,7 +10,14 @@ type LobbyStore = {
   update: (lobby: Lobby) => void;
 };
 export const useLobbyStore = create<LobbyStore>((set) => ({
-  gameState: { cards: [], quests: [], turns: [], users: [], players: [] },
+  gameState: {
+    cards: [],
+    quests: [],
+    turns: [],
+    users: [],
+    players: [],
+    questToBeDraftedCount: 3,
+  },
   update: (lobby) => set({ gameState: lobby }),
 }));
 
@@ -19,6 +27,27 @@ export function useUsersStore() {
       sortBy(state.gameState.users, "userId").map((user) => user.name),
     ),
   );
+}
+
+export function useGameIsReadyToBeStarted() {
+  return useLobbyStore((state) => {
+    const userCount = state.gameState.users.length;
+    const questCount = state.gameState.questToBeDraftedCount;
+    return userCount >= 3 && userCount <= 4 && questCount >= 1;
+  });
+}
+
+export function useQuestToBeDraftedCount() {
+  return useLobbyStore((state) => state.gameState.questToBeDraftedCount);
+}
+
+export function useGameIsOngoing() {
+  return useLobbyStore((state) => {
+    const quests = state.gameState.quests;
+    const someQuestIsActive = quests.some((quest) => isNil(quest.isSuccess));
+
+    return quests.length >= 1 && someQuestIsActive;
+  });
 }
 
 // TODO: create shared utils library
