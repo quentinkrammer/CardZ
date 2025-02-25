@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { desc, eq } from "drizzle-orm";
+import { isNil } from "lodash";
 import { pick } from "../../utils/pick.js";
 import { db } from "../drizzle.js";
 import {
@@ -27,14 +28,15 @@ type User = Pick<SelectUser, "name"> & { userId: SelectUser["id"] };
 type Player = Pick<SelectPlayer, "number" | "userId"> & {
   playerId: SelectPlayer["id"];
 };
-
+type CardCount = Record<SelectPlayer["id"], number>;
 export type GameState = {
   questToBeDraftedCount: number;
   players: Player[];
   users: User[];
   quests: Quest[];
-  cards: Card[];
   turns: Turn[];
+  cards: Card[];
+  cardCount: CardCount;
   lobbyId: SelectLobby["id"];
   gameId?: SelectGame["id"] | undefined;
 };
@@ -120,6 +122,16 @@ export async function getLatestGameOfLobby(
       return prev;
     }, []) ?? [];
 
+  const cardCount = cards.reduce<CardCount>((prev, curr) => {
+    const playerId = curr.playerId;
+    if (isNil(prev[playerId])) {
+      prev[playerId] = 1;
+      return prev;
+    }
+    prev[playerId]++;
+    return prev;
+  }, {});
+
   const players =
     game?.player.reduce<Player[]>((prev, curr) => {
       const player = curr.cardToPlayer[0]!.player;
@@ -147,5 +159,6 @@ export async function getLatestGameOfLobby(
     users,
     players,
     questToBeDraftedCount: lobby.questCount,
+    cardCount,
   };
 }

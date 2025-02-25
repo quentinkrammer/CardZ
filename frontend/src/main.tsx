@@ -8,12 +8,12 @@ import {
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
-import { App } from "./App.tsx";
 import { env } from "./env.ts";
 import "./index.css";
 import { Game } from "./pages/Game.tsx";
+import Home from "./pages/Home.tsx";
 import { Lobby } from "./pages/Lobby.tsx";
-import Root from "./pages/Root.tsx";
+import { RootLayout } from "./pages/RootLayout.tsx";
 import { trpc } from "./trpc.ts";
 
 const queryClient = new QueryClient();
@@ -60,8 +60,8 @@ createRoot(document.getElementById("root")!).render(
 export function Router() {
   return (
     <Routes>
-      <Route element={<App />}>
-        <Route path="/" element={<Root />} />
+      <Route element={<RootLayout />}>
+        <Route path="/" element={<Home />} />
         <Route path="lobby/:lobbyId" element={<Lobby />} loader={() => 42} />
         <Route path="lobby/:lobbyId/game" element={<Game />} />
       </Route>

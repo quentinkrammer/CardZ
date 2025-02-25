@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import { trpc } from "../trpc";
 
-export function Root() {
+export function Home() {
   const createLobby = trpc.lobby.createLobby.useMutation();
   const navigate = useNavigate();
 
@@ -23,4 +23,4 @@ export function Root() {
   );
 }
 
-export default Root;
+export default Home;
