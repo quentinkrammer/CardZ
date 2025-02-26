@@ -20,7 +20,7 @@ export function Quest({
     <div
       className={classNames(
         className,
-        "aspect-[0.82] max-w-20 rounded-md border-1 border-gray-300 bg-radial p-3",
+        "aspect-[0.82] max-w-20 rounded-md border-1 border-gray-300 bg-radial p-[clamp(1px,4%,8px)]",
         {
           ["from-red-900 via-red-800 to-red-950"]: isFailure,
           ["from-green-900 via-green-800 to-green-950"]: isSuccess,

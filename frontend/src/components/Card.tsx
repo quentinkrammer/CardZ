@@ -60,7 +60,7 @@ export function Card({
   return (
     <div
       className={classNames(
-        "aspect-[0.82] w-full max-w-20 rounded-md border-1 border-gray-300 bg-linear-to-br p-3",
+        "aspect-[0.82] w-full max-w-20 rounded-md border-1 border-gray-300 bg-linear-to-br p-[clamp(2px,15%,16px)]",
         color,
         className,
       )}
