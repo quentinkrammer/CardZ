@@ -12,6 +12,7 @@ import {
   SelectGame,
   SelectLobby,
   SelectPlayer,
+  SelectQuest,
   SelectUser,
 } from "../schema.js";
 
@@ -23,7 +24,10 @@ type Turn = {
   playedCardNumber: number;
 };
 type Card = SelectCard & { playerId: SelectPlayer["id"] };
-type Quest = Pick<SelectDraftedQuest, "id" | "playerId" | "isSuccess">;
+type Quest = Pick<SelectDraftedQuest, "playerId" | "isSuccess"> & {
+  questId: SelectQuest["id"];
+  draftedQuestId: SelectDraftedQuest["id"];
+};
 type User = Pick<SelectUser, "name"> & { userId: SelectUser["id"] };
 type Player = Pick<SelectPlayer, "number" | "userId"> & {
   playerId: SelectPlayer["id"];
@@ -101,7 +105,8 @@ export async function getLatestGameOfLobby(
   const quests =
     game?.draftedQuests.reduce<Quest[]>((prev, curr) => {
       prev.push({
-        id: curr.id,
+        draftedQuestId: curr.id,
+        questId: curr.questId,
         playerId: curr.playerId,
         isSuccess: curr.isSuccess,
       });

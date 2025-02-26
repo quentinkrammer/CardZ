@@ -1,5 +1,5 @@
 import { GameState } from "backend";
-import { isNil } from "lodash";
+import { isNil, isNull } from "lodash";
 import { create } from "zustand";
 import { useShallow } from "zustand/react/shallow";
 import { Omit } from "../types";
@@ -49,6 +49,16 @@ export function useGameIsOngoing() {
 
     return quests.length >= 1 && someQuestIsActive;
   });
+}
+
+export function useNonDraftedQuests() {
+  const quests = useLobbyStore(
+    useShallow((state) =>
+      state.gameState.quests.filter((quest) => isNull(quest.playerId)),
+    ),
+  );
+
+  return quests;
 }
 
 // TODO: create shared utils library

@@ -5,7 +5,7 @@ import { trpc } from "../trpc";
 export function RootLayout() {
   return (
     <div className="flex h-screen w-screen flex-col bg-radial from-gray-900 via-blue-800 to-blue-950 to-90% text-white">
-      <Header />
+      {/* <Header /> */}
       <main className="grow-1">
         <Outlet />
       </main>

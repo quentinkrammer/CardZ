@@ -1,6 +1,7 @@
 import { useCallback, type ChangeEventHandler } from "react";
 import { useNavigate } from "react-router";
 import { env } from "../env";
+import { useGameLobbyView } from "../hooks/useGameLobbyView";
 import { useLobbySubscription } from "../hooks/useGameSubscription";
 import {
   useGameIsReadyToBeStarted,
@@ -8,8 +9,8 @@ import {
   useUsersStore,
 } from "../hooks/useLobbyStore";
 import { useLobbyId } from "../hooks/useUrlParams";
-import { useView } from "../hooks/useView";
 import { trpc } from "../trpc";
+import { Game } from "./Game";
 
 export function Lobby() {
   useLobbySubscription();
@@ -17,7 +18,7 @@ export function Lobby() {
   const lobbyId = useLobbyId();
   const leaveLobby = trpc.lobby.leaveLobby.useMutation();
   const navigate = useNavigate();
-  const { view, setView } = useView();
+  const { view, setView } = useGameLobbyView();
 
   const onLeave = () => {
     leaveLobby.mutate({ lobbyId });
@@ -38,10 +39,6 @@ export function Lobby() {
       <StartGameButton />
     </>
   );
-}
-
-function Game() {
-  return "Game is ongoing";
 }
 
 function StartGameButton() {

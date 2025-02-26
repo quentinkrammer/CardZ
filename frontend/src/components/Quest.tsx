@@ -2,8 +2,16 @@ import classNames from "classnames";
 import { isNil } from "lodash";
 import { Card, CardProps } from "./Card";
 
-type QuestProps = CardProps & { status?: "failed" | "success" };
-export function Quest({ status, ...forwardCardProps }: QuestProps) {
+type QuestProps = CardProps & {
+  status?: "failed" | "success";
+  cardClassName?: string;
+};
+export function Quest({
+  status,
+  className,
+  cardClassName,
+  ...forwardCardProps
+}: QuestProps) {
   const isSuccess = status === "success";
   const isFailure = status === "failed";
   const isOngoing = isNil(status);
@@ -11,6 +19,7 @@ export function Quest({ status, ...forwardCardProps }: QuestProps) {
   return (
     <div
       className={classNames(
+        className,
         "aspect-[0.82] max-w-20 rounded-md border-1 border-gray-300 bg-radial p-3",
         {
           ["from-red-900 via-red-800 to-red-950"]: isFailure,
@@ -19,7 +28,7 @@ export function Quest({ status, ...forwardCardProps }: QuestProps) {
         },
       )}
     >
-      <Card {...forwardCardProps} />
+      <Card className={cardClassName} {...forwardCardProps} />
     </div>
   );
 }

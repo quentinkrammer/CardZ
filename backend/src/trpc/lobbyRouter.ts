@@ -44,7 +44,7 @@ export const lobbyRouter = t.router({
       yield gameState;
 
       iterateGameStateForEachUser(gameState, (data) => {
-        if (data.userId !== userId) ee.emit(data.subUrl, data.game);
+        if (data.userId !== userId) ee.emit(data.subUrl, data.secrefiedGame);
       });
 
       for await (const [data] of on(ee, subscriptionUrl({ lobbyId, userId }), {
@@ -61,7 +61,7 @@ export const lobbyRouter = t.router({
 
       iterateGameStateForEachUser(gameState, (data) => {
         if (data.userId === userId) return;
-        ee.emit(data.subUrl, gameState);
+        ee.emit(data.subUrl, data.secrefiedGame);
       });
     }),
   setQuestCount: authedProcedure
@@ -76,7 +76,7 @@ export const lobbyRouter = t.router({
       const gameState = await getLatestGameOfLobby(lobbyId);
 
       iterateGameStateForEachUser(gameState, (data) => {
-        ee.emit(data.subUrl, gameState);
+        ee.emit(data.subUrl, data.secrefiedGame);
       });
     }),
 });
