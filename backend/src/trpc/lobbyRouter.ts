@@ -8,6 +8,7 @@ import { joinLobby } from "../drizzle/query/joinLobby.js";
 import { leaveLobby } from "../drizzle/query/leaveLobby.js";
 import { lobbyTable } from "../drizzle/schema.js";
 import { iterateGameStateForEachUser } from "../iterateGameStateForEachUser.js";
+import { secrifyGameState } from "../secrifyGameState.js";
 import { subscriptionUrl } from "../subscriptionUrl.js";
 import { authedProcedure, ee, t } from "./trpc.js";
 
@@ -41,7 +42,7 @@ export const lobbyRouter = t.router({
       }
 
       const gameState = await getLatestGameOfLobby(lobbyId);
-      yield gameState;
+      yield secrifyGameState({ game: gameState, userId });
 
       iterateGameStateForEachUser(gameState, (data) => {
         if (data.userId !== userId) ee.emit(data.subUrl, data.secrefiedGame);
