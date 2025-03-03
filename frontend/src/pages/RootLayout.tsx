@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { NavLink, Outlet, useParams } from "react-router";
+import { useMyUserData } from "../hooks/useMyUserData";
 import { trpc } from "../trpc";
 
 export function RootLayout() {
@@ -27,13 +28,7 @@ function Header() {
 function Profile() {
   const params = useParams();
   const utils = trpc.useUtils();
-  const { data, isLoading } = trpc.user.getMyUserData.useQuery(undefined, {
-    // TODO make global
-    retry: false,
-    staleTime: Infinity,
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-  });
+  const { data, isLoading } = useMyUserData();
   const [editMode, setEditMode] = useState(false);
 
   const name = data?.name ?? "";
