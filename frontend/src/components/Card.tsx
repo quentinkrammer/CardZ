@@ -15,8 +15,8 @@ import {
   FontAwesomeIcon,
   FontAwesomeIconProps,
 } from "@fortawesome/react-fontawesome";
-import classNames from "classnames";
 import { ComponentProps } from "react";
+import { cn } from "../cn";
 import { Color, Omit } from "../types";
 
 const mapNUmberToSvg = {
@@ -59,8 +59,8 @@ export function Card({
   } = iconProps;
   return (
     <div
-      className={classNames(
-        "aspect-[0.82] w-full max-w-20 rounded-md border-1 border-gray-300 bg-linear-to-br p-[clamp(2px,15%,16px)]",
+      className={cn(
+        "grid place-content-center rounded-md border-1 border-gray-300 bg-linear-to-br",
         color,
         className,
       )}
@@ -70,13 +70,14 @@ export function Card({
         icon={
           mapNUmberToSvg[value as keyof typeof mapNUmberToSvg] ?? faQuestion
         }
-        className={classNames(
+        className={cn(
           `text-gray-300 drop-shadow-[1px_1px_1px_rgba(0,0,0)]`,
           iconClassName,
         )}
         style={{
-          height: "unset",
-          verticalAlign: "unset",
+          // TODO dont ask
+          height: "calc(min(12dvh, 10dvw) / 0.82)",
+          width: "min(12dvh, 10dvw)",
           display: "block",
           ...iconStyle,
         }}
