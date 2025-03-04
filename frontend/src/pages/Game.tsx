@@ -3,17 +3,28 @@ import { useShallow } from "zustand/react/shallow";
 import { cn } from "../cn";
 import { Card } from "../components/Card";
 import { Quest } from "../components/Quest";
-import { offsetToMiddle } from "../getShiftMultiplier";
+import { TeamPlayer } from "../components/TeamPlayer";
 import { useLobbyStore, useNonDraftedQuests } from "../hooks/useLobbyStore";
 import { usePlayerSortedByPosition } from "../hooks/usePlayerSortedByPosition";
+import { offsetToMiddle } from "../offsetToMiddle";
 import { Color } from "../types";
 
 export function Game() {
   const player = usePlayerSortedByPosition();
-  // console.log({ player });
 
   return (
     <div className="grid h-full grid-cols-[30dvw_40dvw_30dvw] grid-rows-[33%_34%_33%] place-items-center">
+      {player.map(({ playerId }, index) => {
+        if (index === 0) return;
+        return (
+          <TeamPlayer
+            playerId={playerId}
+            seatNumber={index}
+            totalPlayerCount={player.length}
+            key={playerId}
+          />
+        );
+      })}
       <PlayArea />
       <MyHand />
     </div>
