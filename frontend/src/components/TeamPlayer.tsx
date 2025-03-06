@@ -2,6 +2,7 @@ import { GameState } from "backend";
 import { range } from "lodash";
 import { ComponentProps } from "react";
 import { cn } from "../cn";
+import { useIsCaptain } from "../hooks/useIsCaptain";
 import { useLobbyStore } from "../hooks/useLobbyStore";
 import { offsets } from "../offsetToMiddle";
 
@@ -33,15 +34,18 @@ export function TeamPlayer({
     (state) => state.gameState.cardCount[playerId],
   );
 
+  const isCaptain = useIsCaptain(playerId);
+
   const offsetMultiplier = offsets(range(cardCount));
 
-  return offsetMultiplier.map((multiplier) => {
+  return offsetMultiplier.map((multiplier, index) => {
     const angleDegree = multiplier * 4;
     const xShift = multiplier * 10;
     const yShift = Math.abs(multiplier) * 3;
 
     return (
       <div
+        key={index}
         style={{
           transform: `translate(${xShift}px, ${yShift}px) rotate(${angleDegree}deg)`,
         }}

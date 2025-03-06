@@ -34,6 +34,7 @@ type Player = Pick<SelectPlayer, "number" | "userId"> & {
 };
 type CardCount = Record<SelectPlayer["id"], number>;
 export type GameState = {
+  captainsPlayerId: number;
   questToBeDraftedCount: number;
   players: Player[];
   users: User[];
@@ -155,6 +156,10 @@ export async function getLatestGameOfLobby(
     return prev;
   }, []);
 
+  const captainsPlayerId =
+    cards.find((card) => card.color === "black" && card.value === "4")
+      ?.playerId ?? NaN;
+
   return {
     turns,
     cards,
@@ -165,5 +170,6 @@ export async function getLatestGameOfLobby(
     players,
     questToBeDraftedCount: lobby.questCount,
     cardCount,
+    captainsPlayerId,
   };
 }

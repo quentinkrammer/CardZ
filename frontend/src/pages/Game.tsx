@@ -4,7 +4,9 @@ import { cn } from "../cn";
 import { Card } from "../components/Card";
 import { Quest } from "../components/Quest";
 import { TeamPlayer } from "../components/TeamPlayer";
+import { useIsCaptain } from "../hooks/useIsCaptain";
 import { useLobbyStore, useNonDraftedQuests } from "../hooks/useLobbyStore";
+import { useMyPlayerId } from "../hooks/useMyPlayerId";
 import { usePlayerSortedByPosition } from "../hooks/usePlayerSortedByPosition";
 import { offsetToMiddle } from "../offsetToMiddle";
 import { Color } from "../types";
@@ -45,33 +47,41 @@ function MyHand() {
       state.gameState.cards.toSorted((a, b) => a.id - b.id),
     ),
   );
-
+  const playerId = useMyPlayerId();
+  const isCaptain = useIsCaptain(playerId);
   return (
-    <div
-      className={classNames(
-        "relative col-start-2 row-start-3 self-end justify-self-center",
+    <>
+      {isCaptain && (
+        <div className="col-start-2 row-start-3 self-start justify-self-start">
+          Captain
+        </div>
       )}
-    >
-      {cards.map((card, index) => {
-        const offset = offsetToMiddle(cards, index);
+      <div
+        className={classNames(
+          "relative col-start-2 row-start-3 self-end justify-self-center",
+        )}
+      >
+        {cards.map((card, index) => {
+          const offset = offsetToMiddle(cards, index);
 
-        return (
-          <Card
-            cardColor={card.color}
-            value={Number(card.value)}
-            key={card.id}
-            className={cn(
-              "absolute cursor-pointer hover:z-10",
-              borderColorToTailwindClassMap[card.color],
-            )}
-            style={{
-              bottom: 0,
-              translate: `calc(min(12dvh, 10dvw) * -0.5 + ${offset} * min(12dvh, 10dvw) / 1.7)`,
-            }}
-          />
-        );
-      })}
-    </div>
+          return (
+            <Card
+              cardColor={card.color}
+              value={Number(card.value)}
+              key={card.id}
+              className={cn(
+                "absolute cursor-pointer hover:z-10",
+                borderColorToTailwindClassMap[card.color],
+              )}
+              style={{
+                bottom: 0,
+                translate: `calc(min(12dvh, 10dvw) * -0.5 + ${offset} * min(12dvh, 10dvw) / 1.7)`,
+              }}
+            />
+          );
+        })}
+      </div>
+    </>
   );
 }
 
