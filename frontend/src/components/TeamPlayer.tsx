@@ -5,6 +5,7 @@ import { cn } from "../cn";
 import { useLobbyStore } from "../hooks/useLobbyStore";
 import { offsets } from "../offsetToMiddle";
 import { Name } from "./Name";
+import { Quests } from "./Quests";
 
 const playerPositionMap: Record<number, Record<number, string>> = {
   3: {
@@ -43,25 +44,30 @@ export function TeamPlayer({
         playerId={playerId}
         className={cn("self-start justify-self-center p-3", position)}
       />
-      {offsetMultiplier.map((multiplier, index) => {
-        const angleDegree = multiplier * 4;
-        const xShift = multiplier * 10;
-        const yShift = Math.abs(multiplier) * 3;
+      <div className="contents">
+        {offsetMultiplier.map((multiplier, index) => {
+          const angleDegree = multiplier * 4;
+          const xShift = multiplier * 10;
+          const yShift = Math.abs(multiplier) * 3;
 
-        return (
-          <div
-            key={index}
-            style={{
-              transform: `translate(${xShift}px, ${yShift}px) rotate(${angleDegree}deg)`,
-            }}
-            className={cn(
-              "before:bg-card-backside aspect-[0.82] w-[min(12dvh,10dvw)] self-center justify-self-center rounded-md border-1 border-gray-300 bg-linear-to-br from-gray-700 via-gray-500 to-gray-700 before:block before:size-full before:content-['']",
-              position,
-              className,
-            )}
-          />
-        );
-      })}
+          return (
+            <div
+              key={index}
+              style={{
+                transform: `translate(${xShift}px, ${yShift}px) rotate(${angleDegree}deg)`,
+              }}
+              className={cn(
+                "before:bg-card-backside aspect-[0.82] w-[min(12dvh,10dvw)] self-center justify-self-center rounded-md border-1 border-gray-300 bg-linear-to-br from-gray-700 via-gray-500 to-gray-700 before:block before:size-full before:content-['']",
+                position,
+                className,
+              )}
+            />
+          );
+        })}
+      </div>
+      <div className="contents">
+        {<Quests playerId={playerId} className={position} />}
+      </div>
     </>
   );
 }
