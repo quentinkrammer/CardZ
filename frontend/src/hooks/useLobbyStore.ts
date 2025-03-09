@@ -16,8 +16,10 @@ export const useLobbyStore = create<LobbyStore>((set) => ({
     turns: [],
     users: [],
     players: [],
+    communications: [],
     cardCount: {},
     questToBeDraftedCount: 3,
+    captainsPlayerId: NaN,
   },
   update: (lobby) => set({ gameState: lobby }),
 }));

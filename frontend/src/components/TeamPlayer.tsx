@@ -8,13 +8,13 @@ import { Name } from "./Name";
 
 const playerPositionMap: Record<number, Record<number, string>> = {
   3: {
-    1: "col-start-1 row-start-1 ",
-    2: "col-start-3 row-start-1 ",
+    1: "col-start-1 row-start-1",
+    2: "col-start-3 row-start-1",
   },
   4: {
-    2: "col-start-2 row-start-1 ",
-    1: "col-start-1 row-start-2 ",
-    3: "col-start-3 row-start-2 ",
+    2: "col-start-2 row-start-1",
+    1: "col-start-1 row-start-2",
+    3: "col-start-3 row-start-2",
   },
 };
 

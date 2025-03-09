@@ -1,11 +1,12 @@
 import { TRPCError } from "@trpc/server";
-import { desc, eq } from "drizzle-orm";
+import { asc, desc, eq } from "drizzle-orm";
 import { isNil } from "lodash";
 import { pick } from "../../utils/pick.js";
 import { db } from "../drizzle.js";
 import {
   gameTable,
   lobbyTable,
+  playerTable,
   SelectCard,
   SelectComunication,
   SelectDraftedQuest,
@@ -13,15 +14,17 @@ import {
   SelectLobby,
   SelectPlayer,
   SelectQuest,
+  SelectTurn,
   SelectUser,
+  turnTable,
 } from "../schema.js";
 
+type Communication = Pick<SelectComunication, "cardId" | "turnId" | "type">;
 type Turn = {
   card: SelectCard;
-  communications: Array<Pick<SelectComunication, "index" | "cardId" | "type">>;
   quests: Array<Pick<SelectDraftedQuest, "questId" | "isSuccess">>;
   playerId: SelectPlayer["id"];
-  playedCardNumber: number;
+  turnId: SelectTurn["id"];
 };
 type Card = SelectCard & { playerId: SelectPlayer["id"] };
 type Quest = Pick<SelectDraftedQuest, "playerId" | "isSuccess"> & {
@@ -41,6 +44,7 @@ export type GameState = {
   quests: Quest[];
   turns: Turn[];
   cards: Card[];
+  communications: Communication[];
   cardCount: CardCount;
   lobbyId: SelectLobby["id"];
   gameId?: SelectGame["id"] | undefined;
@@ -57,6 +61,7 @@ export async function getLatestGameOfLobby(
         limit: 1,
         with: {
           player: {
+            orderBy: [asc(playerTable.number)],
             with: {
               cardToPlayer: {
                 with: { card: true, player: { with: { user: true } } },
@@ -64,13 +69,14 @@ export async function getLatestGameOfLobby(
             },
           },
           turn: {
+            orderBy: [asc(turnTable.id)],
             with: {
-              communications: true,
               draftedQuests: true,
-              card: { with: { cardToPlayer: true } },
+              card: true,
             },
           },
           draftedQuests: true,
+          communications: true,
         },
       },
       lobbyToUser: { columns: { userId: true }, with: { user: true } },
@@ -85,20 +91,32 @@ export async function getLatestGameOfLobby(
 
   const game = lobby?.games[0];
 
+  const cardToPlayerFlat =
+    game?.player.flatMap((player) =>
+      player.cardToPlayer.map((cardToPlayer) => ({
+        cardId: cardToPlayer.cardId,
+        playerId: cardToPlayer.playerId,
+      }))
+    ) ?? [];
+
+  const mapCardIdToPlayerId = cardToPlayerFlat.reduce<
+    Record<SelectCard["id"], SelectPlayer["id"]>
+  >((prev, curr) => {
+    prev[curr.cardId] = curr.playerId;
+
+    return prev;
+  }, {});
+
   const turns =
-    game?.turn.reduce<Turn[]>((prev, curr, index) => {
-      const { card, communications, draftedQuests } = curr;
+    game?.turn.reduce<Turn[]>((prev, curr) => {
+      const { card, draftedQuests, id } = curr;
       prev.push({
-        playedCardNumber: index,
-        // TODO throw error if playerId does not exist
-        playerId: card.cardToPlayer[0]!.playerId,
+        playerId: mapCardIdToPlayerId[card.id]!,
         card: pick(card, "id", "color", "value"),
-        communications: communications.map((com) =>
-          pick(com, "index", "cardId", "type")
-        ),
         quests: draftedQuests.map((quest) =>
           pick(quest, "questId", "isSuccess")
         ),
+        turnId: id,
       });
       return prev;
     }, []) ?? [];
@@ -128,7 +146,12 @@ export async function getLatestGameOfLobby(
       return prev;
     }, []) ?? [];
 
-  const cardCount = cards.reduce<CardCount>((prev, curr) => {
+  const nonPlayedCards = turns.reduce(
+    (prev, curr) => prev.filter((card) => card.id !== curr.card.id),
+    cards
+  );
+
+  const cardCount = nonPlayedCards.reduce<CardCount>((prev, curr) => {
     const playerId = curr.playerId;
     if (isNil(prev[playerId])) {
       prev[playerId] = 1;
@@ -160,15 +183,21 @@ export async function getLatestGameOfLobby(
     cards.find((card) => card.color === "black" && card.value === "4")
       ?.playerId ?? NaN;
 
+  const communications =
+    game?.communications.map((communication) =>
+      pick(communication, "cardId", "type", "turnId")
+    ) ?? [];
+
   return {
     turns,
-    cards,
+    cards: nonPlayedCards,
     quests,
     gameId: game?.id,
     lobbyId,
     users,
     players,
     questToBeDraftedCount: lobby.questCount,
+    communications,
     cardCount,
     captainsPlayerId,
   };

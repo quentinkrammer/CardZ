@@ -45,6 +45,7 @@ export const gameRelations = relations(gameTable, ({ many, one }) => {
     player: many(playerTable),
     turn: many(turnTable),
     draftedQuests: many(draftedQuestTable),
+    communications: many(communicationTable),
   };
 });
 export type SelectGame = InferSelectModel<typeof gameTable>;
@@ -130,13 +131,13 @@ export const turnRelations = relations(turnTable, ({ many, one }) => {
 export const communicationTable = sqliteTable("communications", {
   id: int().primaryKey({ autoIncrement: true }),
   type: text({ enum: ["lowest", "highest", "single"] }).notNull(),
-  index: int({ mode: "number" }).notNull(),
   cardId: int("card_id")
     .references(() => cardTable.id)
     .notNull(),
-  turnId: int("turn_id")
-    .references(() => turnTable.id)
+  gameId: int("game_id")
+    .references(() => gameTable.id)
     .notNull(),
+  turnId: int("turn_id").references(() => turnTable.id),
 });
 export type SelectComunication = InferSelectModel<typeof communicationTable>;
 export type InsertCommunication = InferInsertModel<typeof communicationTable>;
@@ -151,6 +152,10 @@ export const communicationRelations = relations(
       turn: one(turnTable, {
         references: [turnTable.id],
         fields: [communicationTable.turnId],
+      }),
+      game: one(gameTable, {
+        references: [gameTable.id],
+        fields: [communicationTable.gameId],
       }),
     };
   }
