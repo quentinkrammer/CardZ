@@ -24,6 +24,7 @@ export function Quests({ playerId, className, ...forwardProps }: QuestsProps) {
         className={cn("z-20 scale-50 self-end justify-self-center", className)}
         key={quest.questId}
         {...forwardProps}
+        style={{ viewTransitionName: `quest-${value}-${color}` }}
       />
     );
   });

@@ -64,6 +64,7 @@ export function Card({
         color,
         className,
       )}
+      style={{ viewTransitionName: `card-${value}-${color}` }}
       {...forwardProps}
     >
       <FontAwesomeIcon

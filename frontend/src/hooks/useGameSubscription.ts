@@ -1,3 +1,4 @@
+import { flushSync } from "react-dom";
 import { trpc } from "../trpc";
 import { useLobbyStore, type Lobby } from "./useLobbyStore";
 import { useUrlParams } from "./useUrlParams";
@@ -12,7 +13,11 @@ export function useLobbySubscription() {
         console.log("started");
       },
       onData: (d) => {
-        updateLobby(d as Lobby);
+        document.startViewTransition(() => {
+          flushSync(() => {
+            updateLobby(d as Lobby);
+          });
+        });
         console.log("SSE data:", d);
       },
       onError: (e) => {
