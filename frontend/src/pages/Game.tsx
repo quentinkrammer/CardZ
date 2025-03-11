@@ -91,6 +91,9 @@ function PlayArea() {
         value={Number(turn.card.value)}
         key={turn.turnId}
         className={cn("col-start-2 row-start-2", cardPosition)}
+        style={{
+          viewTransitionName: `card-${turn.card.value}-${turn.card.color}`,
+        }}
       />
     );
   });
