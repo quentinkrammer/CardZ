@@ -10,6 +10,8 @@ export function Quest({
   status,
   className,
   cardClassName,
+  cardColor,
+  value,
   ...forwardCardProps
 }: QuestProps) {
   const isSuccess = status === "success";
@@ -27,8 +29,14 @@ export function Quest({
         },
         className,
       )}
+      style={{ viewTransitionName: `quest-${cardColor}-${value}` }}
     >
-      <Card className={cardClassName} {...forwardCardProps} />
+      <Card
+        className={cardClassName}
+        cardColor={cardColor}
+        value={value}
+        {...forwardCardProps}
+      />
     </div>
   );
 }

@@ -85,6 +85,12 @@ function PlayArea() {
       (player) => player.playerId === turn.playerId,
     );
     const cardPosition = cardPositionMap[sortedPlayers.length][playerPosition];
+
+    const isMyCard = playerId === turn.playerId;
+    const viewTransitionName = isMyCard
+      ? `card-${turn.card.value}-${turn.card.color}`
+      : `card-${playerId}`;
+
     return (
       <Card
         cardColor={turn.card.color}
@@ -92,7 +98,7 @@ function PlayArea() {
         key={turn.turnId}
         className={cn("col-start-2 row-start-2", cardPosition)}
         style={{
-          viewTransitionName: `card-${turn.card.value}-${turn.card.color}`,
+          viewTransitionName,
         }}
       />
     );

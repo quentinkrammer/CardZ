@@ -20,7 +20,7 @@ export function Home() {
 
   return (
     <div className="grid h-full place-content-center gap-2">
-      <Button label="Create" />
+      <Button label="Create" onClick={onCreate} />
       <div className="rounded border-1 border-transparent has-[:focus-visible]:border-white">
         <input
           ref={ref}
