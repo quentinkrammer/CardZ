@@ -1,12 +1,20 @@
-import { ComponentProps, ReactNode, useRef } from "react";
+import { ComponentProps, ReactNode, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { cn } from "../cn";
 import { trpc } from "../trpc";
+import { getLocalStorage } from "../utils/localSorage";
 
 export function Home() {
   const createLobby = trpc.lobby.createLobby.useMutation();
   const navigate = useNavigate();
   const ref = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const inputElement = ref.current;
+    if (!inputElement) return;
+    const lobbyId = getLocalStorage("lobbyId");
+    inputElement.value = lobbyId;
+  }, []);
 
   const onCreate = async () => {
     const { lobbyId } = await createLobby.mutateAsync();
@@ -27,7 +35,7 @@ export function Home() {
           className="rounded bg-gray-900 p-2 shadow-[1rem_0_0_var(--color-gray-900)] hover:bg-gray-800 hover:shadow-[1rem_0_0_var(--color-gray-800)] focus:outline-0"
           placeholder="Lobby-ID"
         />
-        <Button label="Join" className="rounded-l-[1rem]" />
+        <Button label="Join" className="rounded-l-[1rem]" onClick={onJoin} />
       </div>
     </div>
   );
