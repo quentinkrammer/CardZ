@@ -26,9 +26,7 @@ export const useLobbyStore = create<LobbyStore>((set) => ({
 
 export function useUsersStore() {
   return useLobbyStore(
-    useShallow((state) =>
-      sortBy(state.gameState.users, "userId").map((user) => user.name),
-    ),
+    useShallow((state) => sortBy(state.gameState.users, "userId")),
   );
 }
 

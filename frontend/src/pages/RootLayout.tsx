@@ -1,7 +1,4 @@
-import { useState } from "react";
-import { NavLink, Outlet, useParams } from "react-router";
-import { useMyUserData } from "../hooks/useMyUserData";
-import { trpc } from "../trpc";
+import { NavLink, Outlet } from "react-router";
 
 export function RootLayout() {
   return (
@@ -17,43 +14,6 @@ function Header() {
       <nav>
         <NavLink to="/">Home</NavLink>
       </nav>
-      <Profile />
     </header>
-  );
-}
-
-function Profile() {
-  const params = useParams();
-  const utils = trpc.useUtils();
-  const { data, isLoading } = useMyUserData();
-  const [editMode, setEditMode] = useState(false);
-
-  const name = data?.name ?? "";
-
-  const setName = trpc.user.setName.useMutation({
-    onSuccess: () => utils.user.getMyUserData.invalidate(),
-    // TODO global error handling
-  });
-
-  return (
-    <div>
-      {!editMode && (
-        <div onDoubleClick={() => setEditMode(true)}>
-          {isLoading ? "updating..." : name}
-        </div>
-      )}
-      {editMode && (
-        <input
-          placeholder={name}
-          onBlur={(e) => {
-            setName.mutate({
-              name: e.target.value,
-              lobbyId: params["lobbyId"],
-            });
-            setEditMode(false);
-          }}
-        />
-      )}
-    </div>
   );
 }

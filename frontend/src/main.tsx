@@ -25,7 +25,7 @@ const trpcClient = trpc.createClient({
       // uses the httpSubscriptionLink for subscriptions
       condition: (op) => op.type === "subscription",
       true: unstable_httpSubscriptionLink({
-        url: env.url,
+        url: env.backendUrl,
         eventSourceOptions() {
           return {
             withCredentials: true,
@@ -33,7 +33,7 @@ const trpcClient = trpc.createClient({
         },
       }),
       false: httpBatchLink({
-        url: env.url,
+        url: env.backendUrl,
         fetch(url, options) {
           return fetch(url, {
             ...options,

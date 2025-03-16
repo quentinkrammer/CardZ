@@ -1,6 +1,7 @@
-import { ComponentProps, ReactNode, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
-import { cn } from "../cn";
+import { Button } from "../components/Button";
+import { Input } from "../components/Input";
 import { trpc } from "../trpc";
 import { getLocalStorage } from "../utils/localSorage";
 
@@ -13,7 +14,7 @@ export function Home() {
     const inputElement = ref.current;
     if (!inputElement) return;
     const lobbyId = getLocalStorage("lobbyId");
-    inputElement.value = lobbyId;
+    inputElement.value = lobbyId ?? "";
   }, []);
 
   const onCreate = async () => {
@@ -29,34 +30,16 @@ export function Home() {
   return (
     <div className="grid h-full place-content-center gap-2">
       <Button label="Create" onClick={onCreate} />
-      <div className="rounded border-1 border-transparent has-[:focus-visible]:border-white">
-        <input
-          ref={ref}
-          className="rounded bg-gray-900 p-2 shadow-[1rem_0_0_var(--color-gray-900)] hover:bg-gray-800 hover:shadow-[1rem_0_0_var(--color-gray-800)] focus:outline-0"
-          placeholder="Lobby-ID"
-        />
-        <Button label="Join" className="rounded-l-[1rem]" onClick={onJoin} />
-      </div>
+      <Input
+        placeholder="Lobby-ID"
+        ref={ref}
+        className=""
+        rightElement={
+          <Button label="Join" className="rounded-l-[1rem]" onClick={onJoin} />
+        }
+      />
     </div>
   );
 }
 
 export default Home;
-
-interface ButtonProps extends ComponentProps<"button"> {
-  label: ReactNode;
-}
-
-export function Button({ label, className, ...forwardProps }: ButtonProps) {
-  return (
-    <button
-      className={cn(
-        "hover:text-shadow min-w-20 cursor-pointer rounded bg-blue-600 p-2 hover:bg-blue-500 active:bg-blue-600",
-        className,
-      )}
-      {...forwardProps}
-    >
-      {label}
-    </button>
-  );
-}
