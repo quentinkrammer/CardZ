@@ -1,18 +1,12 @@
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { range } from "lodash";
-import {
-  ChangeEventHandler,
-  ComponentProps,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { useNavigate, useParams } from "react-router";
+import { ChangeEventHandler, ComponentProps, useCallback, useRef } from "react";
+import { useNavigate } from "react-router";
 import { cn } from "../cn";
 import { Button, ButtonProps } from "../components/Button";
 import { Input, InputProps } from "../components/Input";
+import { MyUserName } from "../components/MyUserName";
 import { env } from "../env";
 import { useGameLobbyView } from "../hooks/useGameLobbyView";
 import { useLobbySubscription } from "../hooks/useGameSubscription";
@@ -144,59 +138,6 @@ function Users({ className }: UsersProps) {
         }
         return <MyUserName key={index} />;
       })}
-    </div>
-  );
-}
-
-function MyUserName() {
-  const params = useParams();
-  const utils = trpc.useUtils();
-  const { data, isFetching } = useMyUserData();
-  const [editMode, setEditMode] = useState(false);
-  const ref = useRef<HTMLInputElement>(null!);
-
-  useEffect(() => {
-    if (!ref) return;
-    if (!editMode) return;
-    ref.current.focus();
-  }, [editMode]);
-
-  const name = data?.name ?? "";
-
-  const setName = trpc.user.setName.useMutation({
-    onSuccess: () => utils.user.getMyUserData.invalidate(),
-  });
-
-  const onRename = (inputElement: HTMLInputElement) => {
-    const value = inputElement.value;
-    if (!value) return setEditMode(false);
-    setName.mutate({
-      name: inputElement.value,
-      lobbyId: params["lobbyId"],
-    });
-    setEditMode(false);
-  };
-
-  return (
-    <div className="cursor-pointer">
-      {!editMode && (
-        <div
-          className="min-w-40 rounded bg-gray-900 p-2 hover:bg-gray-800"
-          onClick={() => setEditMode(true)}
-        >
-          {isFetching ? "updating..." : name}
-        </div>
-      )}
-      {editMode && (
-        <Input
-          ref={ref}
-          placeholder={name}
-          onBlur={(e) => onRename(e.target)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") onRename(e.currentTarget);
-          }}
-        />
-      )}
     </div>
   );
 }

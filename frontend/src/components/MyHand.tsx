@@ -3,7 +3,6 @@ import { isNil } from "lodash";
 import { useShallow } from "zustand/react/shallow";
 import { cn } from "../cn";
 import { useActivePlayer } from "../hooks/useActivePlayer";
-import { useIsCaptain } from "../hooks/useIsCaptain";
 import { useLobbyStore } from "../hooks/useLobbyStore";
 import { useMyPlayerId } from "../hooks/useMyPlayerId";
 import { useLobbyId } from "../hooks/useUrlParams";
@@ -11,6 +10,7 @@ import { offsetToMiddle } from "../offsetToMiddle";
 import { trpc } from "../trpc";
 import { Color } from "../types";
 import { Card } from "./Card";
+import { Name } from "./Name";
 import { Quests } from "./Quests";
 
 const borderColorToTailwindClassMap: Record<Color, string> = {
@@ -28,7 +28,6 @@ export function MyHand() {
     ),
   );
   const playerId = useMyPlayerId();
-  const isCaptain = useIsCaptain(playerId);
   const lobbyId = useLobbyId();
   const activePlayer = useActivePlayer();
   const playCard = trpc.game.playCard.useMutation();
@@ -42,11 +41,12 @@ export function MyHand() {
   if (isNil(playerId)) return;
   return (
     <>
-      {isCaptain && (
-        <div className="col-start-2 row-start-3 self-start justify-self-start">
-          Captain
-        </div>
-      )}
+      {
+        <Name
+          playerId={playerId}
+          className="col-start-2 row-start-3 self-start justify-self-start"
+        />
+      }
       <div
         className={classNames(
           "relative col-start-2 row-start-3 self-end justify-self-center",
