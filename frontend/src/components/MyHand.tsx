@@ -1,9 +1,11 @@
+import { GameState } from "backend";
 import classNames from "classnames";
 import { isNil } from "lodash";
 import { useShallow } from "zustand/react/shallow";
 import { cn } from "../cn";
 import { useActivePlayer } from "../hooks/useActivePlayer";
-import { useLobbyStore } from "../hooks/useLobbyStore";
+import { useActiveTurns } from "../hooks/useActiveTurns";
+import { useLobbyStore, useNonDraftedQuests } from "../hooks/useLobbyStore";
 import { useMyPlayerId } from "../hooks/useMyPlayerId";
 import { useLobbyId } from "../hooks/useUrlParams";
 import { offsetToMiddle } from "../offsetToMiddle";
@@ -31,11 +33,26 @@ export function MyHand() {
   const lobbyId = useLobbyId();
   const activePlayer = useActivePlayer();
   const playCard = trpc.game.playCard.useMutation();
+  const isDraftingPhase = useNonDraftedQuests().length > 0;
+  const activeTurns = useActiveTurns();
 
-  const onCard = (cardId: number) => {
+  const onCard = (card: GameState["cards"][number]) => {
     if (playerId !== activePlayer?.playerId)
       return console.warn("It's not your turn");
-    playCard.mutate({ cardId, lobbyId });
+    if (isDraftingPhase) return console.warn("It's drafting phase.");
+
+    const firstCardOfRound = activeTurns[0]?.card;
+    const isFirstCard = !firstCardOfRound;
+    const mustAbideColor = isFirstCard
+      ? false
+      : cards.some((c) => c.color === firstCardOfRound.color);
+
+    const cardIsPlayable =
+      !mustAbideColor || card.color === firstCardOfRound?.color;
+
+    if (!cardIsPlayable) return console.log("Card is not playable.");
+
+    playCard.mutate({ cardId: card.id, lobbyId });
   };
 
   if (isNil(playerId)) return;
@@ -59,7 +76,7 @@ export function MyHand() {
             <Card
               cardColor={card.color}
               value={Number(card.value)}
-              onDoubleClick={() => onCard(card.id)}
+              onDoubleClick={() => onCard(card)}
               key={card.id}
               className={cn(
                 "absolute cursor-pointer hover:z-10",
