@@ -34,9 +34,8 @@ export function Home() {
         placeholder="Lobby-ID"
         ref={ref}
         className=""
-        rightElement={
-          <Button label="Join" className="rounded-l-[1rem]" onClick={onJoin} />
-        }
+        rightElement={<Button label="Join" onClick={onJoin} />}
+        onFocus={(event) => event.target.select()}
       />
     </div>
   );
