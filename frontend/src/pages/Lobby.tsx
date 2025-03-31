@@ -91,13 +91,13 @@ function InviteUrls() {
   return (
     <div className="flex max-w-140 grow-1 flex-col gap-3">
       <div>Invite others:</div>
-      <CopyToClipboard value={lobbyId} />
-      <CopyToClipboard value={`${env.frontendUrl}/lobby/${lobbyId}`} />
+      <CopyToClipboard defaultValue={lobbyId} />
+      <CopyToClipboard defaultValue={`${env.frontendUrl}/lobby/${lobbyId}`} />
     </div>
   );
 }
 
-function CopyToClipboard({ value }: Pick<InputProps, "value">) {
+function CopyToClipboard({ defaultValue }: Pick<InputProps, "defaultValue">) {
   const ref = useRef<HTMLInputElement>(null);
 
   const onCopy = () => {
@@ -106,7 +106,7 @@ function CopyToClipboard({ value }: Pick<InputProps, "value">) {
 
   return (
     <Input
-      value={value}
+      defaultValue={defaultValue}
       ref={ref}
       className="pointer-events-none"
       rightElement={
