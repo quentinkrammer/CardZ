@@ -4,6 +4,8 @@ import { setLocalStorage } from "../utils/localSorage";
 import { useLobbyStore, type Lobby } from "./useLobbyStore";
 import { useUrlParams } from "./useUrlParams";
 
+const startViewTransition = document.startViewTransition;
+
 export function useLobbySubscription() {
   const { lobbyId } = useUrlParams();
   const updateLobby = useLobbyStore((state) => state.update);
@@ -15,6 +17,10 @@ export function useLobbySubscription() {
         setLocalStorage("lobbyId", lobbyId);
       },
       onData: (d) => {
+        if (!startViewTransition) {
+          updateLobby(d as Lobby);
+          return;
+        }
         document.startViewTransition(() => {
           flushSync(() => {
             updateLobby(d as Lobby);
