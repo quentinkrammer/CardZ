@@ -162,15 +162,17 @@ export async function getLatestGameOfLobby(
   }, {});
 
   const players =
-    game?.player.reduce<Player[]>((prev, curr) => {
-      const player = curr.cardToPlayer[0]!.player;
-      prev.push({
-        userId: player.userId,
-        playerId: player.id,
-        number: player.number,
-      });
-      return prev;
-    }, []) ?? [];
+    game?.player
+      .reduce<Player[]>((prev, curr) => {
+        const player = curr.cardToPlayer[0]!.player;
+        prev.push({
+          userId: player.userId,
+          playerId: player.id,
+          number: player.number,
+        });
+        return prev;
+      }, [])
+      .toSorted((player) => player.number) ?? [];
 
   const users = lobby.lobbyToUser.reduce<User[]>((prev, curr) => {
     const user = curr.user;
