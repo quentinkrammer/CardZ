@@ -67,7 +67,7 @@ export const gameRouter = t.router({
         ee.emit(data.subUrl, data.secrefiedGame);
       });
     }),
-  commuicate: authedProcedure
+  communicate: authedProcedure
     .input(
       z.object({
         lobbyId: z.string(),

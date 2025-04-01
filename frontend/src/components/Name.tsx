@@ -61,7 +61,6 @@ function useIsMyPlayerId(playerId: GameState["captainsPlayerId"]) {
   return useLobbyStore((state) => {
     const myPlayerId = state.gameState.cards[0]?.playerId;
 
-    console.log("playerId", playerId);
     return playerId === myPlayerId;
   });
 }
