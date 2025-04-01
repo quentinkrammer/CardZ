@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { asc, desc, eq } from "drizzle-orm";
-import { isNil } from "lodash";
+import { chunk, isNil, isNull } from "lodash";
+import { getWinningPlayer } from "../../utils/getWinningPlayer.js";
 import { pick } from "../../utils/pick.js";
 import { db } from "../drizzle.js";
 import {
@@ -20,7 +21,7 @@ import {
 } from "../schema.js";
 
 type Communication = Pick<SelectComunication, "cardId" | "turnId" | "type">;
-type Turn = {
+export type Turn = {
   card: SelectCard;
   quests: Array<Pick<SelectDraftedQuest, "questId" | "isSuccess">>;
   playerId: SelectPlayer["id"];
@@ -121,17 +122,6 @@ export async function getLatestGameOfLobby(
       return prev;
     }, []) ?? [];
 
-  const quests =
-    game?.draftedQuests.reduce<Quest[]>((prev, curr) => {
-      prev.push({
-        draftedQuestId: curr.id,
-        questId: curr.questId,
-        playerId: curr.playerId,
-        isSuccess: curr.isSuccess,
-      });
-      return prev;
-    }, []) ?? [];
-
   const cards =
     game?.player.reduce<Card[]>((prev, curr) => {
       const cardsOfPlayer = curr.cardToPlayer.map((cardToPlayer) => {
@@ -189,6 +179,48 @@ export async function getLatestGameOfLobby(
     game?.communications.map((communication) =>
       pick(communication, "cardId", "type", "turnId")
     ) ?? [];
+
+  const questsWihtoutSuccessStatus =
+    game?.draftedQuests.reduce<Quest[]>((prev, curr) => {
+      prev.push({
+        draftedQuestId: curr.id,
+        questId: curr.questId,
+        playerId: curr.playerId,
+        isSuccess: curr.isSuccess,
+      });
+      return prev;
+    }, []) ?? [];
+
+  const quests = chunk(turns, players.length).reduce(
+    (prev, curr) => {
+      if (curr.length < players.length) return prev;
+
+      const questWithSuccessStatus = prev.map((quest) => {
+        if (!isNull(quest.isSuccess) || isNull(quest.playerId)) return quest;
+
+        const status = getQuestSuccess(curr, quest.questId, quest.playerId);
+
+        return { ...quest, isSuccess: status };
+      });
+
+      return questWithSuccessStatus;
+    },
+    [...questsWihtoutSuccessStatus]
+  );
+
+  function getQuestSuccess(turns: Turn[], questId: string, playerId: number) {
+    const [color, value] = questId.split("-");
+
+    const turnWithQuest = turns.find(
+      ({ card }) => card.color === color && card.value === value
+    );
+    if (!turnWithQuest) return null;
+
+    const winningPlayerId = getWinningPlayer(turns);
+    if (isNil(winningPlayerId)) return null;
+
+    return playerId === winningPlayerId;
+  }
 
   return {
     turns,

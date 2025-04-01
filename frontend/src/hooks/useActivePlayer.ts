@@ -31,12 +31,8 @@ export function useActivePlayer() {
         activeCardsCount === 0
           ? gameState.turns.slice(-1 * playerCount)
           : gameState.turns.slice(start, end);
-      const lastRoundCards = lastRoundTurns.map((turn) => ({
-        ...turn.card,
-        playerId: turn.playerId,
-      }));
 
-      const lastRoundWinnerId = getWinningPlayer(lastRoundCards);
+      const lastRoundWinnerId = getWinningPlayer(lastRoundTurns);
       if (activeCardsCount === 0)
         return sortedPlayer.find(
           (player) => player.playerId === lastRoundWinnerId,
@@ -63,7 +59,15 @@ function getNextPlayer({
   return players[nextIndex];
 }
 
-function getWinningPlayer(cards: GameState["cards"]) {
+// TODO move to shared pnpm workspace
+function getWinningPlayer(turns: GameState["turns"]) {
+  const cards = turns.map((turn) => ({
+    ...turn.card,
+    playerId: turn.playerId,
+  }));
+
+  if (cards.length === 0) return;
+
   const winningCard = cards.reduce((prev, curr) => {
     // sticht mit trumpf
     if (curr.color === "black" && prev.color !== "black") return curr;
@@ -72,7 +76,7 @@ function getWinningPlayer(cards: GameState["cards"]) {
     // nummer ist niedriger
     if (curr.value < prev.value) return prev;
     return curr;
-  }, cards[0]);
+  }, cards[0]!);
   return winningCard.playerId;
 }
 
