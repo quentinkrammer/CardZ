@@ -5,13 +5,14 @@ import { useShallow } from "zustand/react/shallow";
 import { cn } from "../cn";
 import { useActivePlayer } from "../hooks/useActivePlayer";
 import { useActiveTurns } from "../hooks/useActiveTurns";
+import { useCommuniationOverlayStore } from "../hooks/useCommuniationOverlayStore";
 import { useLobbyStore, useNonDraftedQuests } from "../hooks/useLobbyStore";
 import { useMyPlayerId } from "../hooks/useMyPlayerId";
 import { useLobbyId } from "../hooks/useUrlParams";
 import { offsetToMiddle } from "../offsetToMiddle";
 import { trpc } from "../trpc";
 import { Color } from "../types";
-import { Card } from "./Card";
+import { Card, CardProps } from "./Card";
 import { Name } from "./Name";
 import { Quests } from "./Quests";
 
@@ -87,6 +88,13 @@ export function MyHand() {
                 translate: `calc(min(12dvh, 10dvw) * -0.5 + ${offset} * min(12dvh, 10dvw) / 1.7)`,
                 viewTransitionName: `card-${card.value}-${card.color}`,
               }}
+              overlayContainerClass="place-self-center"
+              overlay={
+                <CommunicationOverlay
+                  cardColor={card.color}
+                  value={Number(card.value)}
+                />
+              }
             />
           );
         })}
@@ -97,4 +105,14 @@ export function MyHand() {
       />
     </>
   );
+}
+
+type CommunicationOverlayProps = Pick<CardProps, "value" | "cardColor">;
+function CommunicationOverlay(props: CommunicationOverlayProps) {
+  const overlayIsActive = useCommuniationOverlayStore(
+    (state) => state.isActive,
+  );
+
+  if (!overlayIsActive) return;
+  return "moin";
 }

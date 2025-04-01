@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GameState } from "backend";
 import { ComponentProps } from "react";
 import { cn } from "../cn";
+import { useCommuniationOverlayStore } from "../hooks/useCommuniationOverlayStore";
 import { useIsCaptain } from "../hooks/useIsCaptain";
 import { useLobbyStore } from "../hooks/useLobbyStore";
 import { usePlayerName } from "../hooks/usePlayerName";
@@ -35,12 +36,14 @@ function SpeakerSymbol({
 }) {
   const isMe = useIsMyPlayerId(playerId);
   const hasComunicationLeft = !useCommunication(playerId);
-  console.log({ hasComunicationLeft, isMe });
+  const onToggleOverlay = useCommuniationOverlayStore((state) => state.toggle);
+
   if (isMe && hasComunicationLeft) {
     return (
       <Button
         className="min-w-10 rounded-full"
         label={<FontAwesomeIcon icon={faVolumeHigh} />}
+        onClick={onToggleOverlay}
       />
     );
   }

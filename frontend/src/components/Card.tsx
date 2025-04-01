@@ -15,7 +15,7 @@ import {
   FontAwesomeIcon,
   FontAwesomeIconProps,
 } from "@fortawesome/react-fontawesome";
-import { ComponentProps } from "react";
+import { ComponentProps, ReactNode } from "react";
 import { cn } from "../cn";
 import { Color, Omit } from "../types";
 
@@ -42,12 +42,16 @@ const colorToTailwindClassMap: Record<Color, string> = {
 export interface CardProps extends ComponentProps<"div"> {
   value: number;
   cardColor: Color;
+  overlay?: ReactNode;
+  overlayContainerClass?: string;
   iconProps?: Omit<FontAwesomeIconProps, "icon">;
 }
 export function Card({
   value,
   cardColor,
   className,
+  overlay,
+  overlayContainerClass,
   iconProps = {},
   ...forwardProps
 }: CardProps) {
@@ -71,7 +75,7 @@ export function Card({
           mapNUmberToSvg[value as keyof typeof mapNUmberToSvg] ?? faQuestion
         }
         className={cn(
-          `text-gray-300 drop-shadow-[1px_1px_1px_rgba(0,0,0)]`,
+          `col-start-1 col-end-2 row-start-1 row-end-2 text-gray-300 drop-shadow-[1px_1px_1px_rgba(0,0,0)]`,
           iconClassName,
         )}
         style={{
@@ -83,6 +87,16 @@ export function Card({
         }}
         {...forwardIconProps}
       />
+      {overlay && (
+        <div
+          className={cn(
+            "col-start-1 col-end-2 row-start-1 row-end-2",
+            overlayContainerClass,
+          )}
+        >
+          {overlay}
+        </div>
+      )}
     </div>
   );
 }
