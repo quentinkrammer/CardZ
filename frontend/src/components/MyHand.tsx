@@ -114,11 +114,28 @@ function CommunicationOverlay({ cardColor, value }: CommunicationOverlayProps) {
     (state) => state.isActive,
   );
 
-  if (!overlayIsActive) return;
+  const communicationOption = useCommunicationOption({ cardColor, value });
+
+  if (!overlayIsActive || !communicationOption) return;
   return (
     <Button
-      label="single"
+      label={communicationOption}
       className="min-w-0 opacity-80 drop-shadow-none hover:opacity-100 hover:drop-shadow-[1px_1px_1px_rgba(0,0,0)] active:drop-shadow-none"
     />
   );
+}
+
+function useCommunicationOption({
+  cardColor,
+  value,
+}: Pick<CardProps, "value" | "cardColor">) {
+  return useLobbyStore((state) => {
+    const cards = state.gameState.cards.filter(
+      (card) => card.color === cardColor,
+    );
+
+    if (cards.length === 1) return "single";
+    if (cards.every((card) => Number(card.value) <= value)) return "highest";
+    if (cards.every((card) => Number(card.value) >= value)) return "lowest";
+  });
 }
