@@ -12,6 +12,7 @@ import { useLobbyId } from "../hooks/useUrlParams";
 import { offsetToMiddle } from "../offsetToMiddle";
 import { trpc } from "../trpc";
 import { Color } from "../types";
+import { Button } from "./Button";
 import { Card, CardProps } from "./Card";
 import { Name } from "./Name";
 import { Quests } from "./Quests";
@@ -108,11 +109,16 @@ export function MyHand() {
 }
 
 type CommunicationOverlayProps = Pick<CardProps, "value" | "cardColor">;
-function CommunicationOverlay(props: CommunicationOverlayProps) {
+function CommunicationOverlay({ cardColor, value }: CommunicationOverlayProps) {
   const overlayIsActive = useCommuniationOverlayStore(
     (state) => state.isActive,
   );
 
   if (!overlayIsActive) return;
-  return "moin";
+  return (
+    <Button
+      label="single"
+      className="min-w-0 opacity-80 drop-shadow-none hover:opacity-100 hover:drop-shadow-[1px_1px_1px_rgba(0,0,0)] active:drop-shadow-none"
+    />
+  );
 }
