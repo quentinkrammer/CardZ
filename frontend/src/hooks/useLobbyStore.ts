@@ -42,9 +42,16 @@ export function useQuestToBeDraftedCount() {
   return useLobbyStore((state) => state.gameState.questToBeDraftedCount);
 }
 
+// todo extract util to move to shared pnpm repo
 export function useGameIsOngoing() {
   return useLobbyStore((state) => {
     const quests = state.gameState.quests;
+
+    const someQuestHasFailed = quests.some(
+      (quest) => quest.isSuccess === false,
+    );
+    if (someQuestHasFailed) return false;
+
     const someQuestIsActive = quests.some((quest) => isNil(quest.isSuccess));
 
     return quests.length >= 1 && someQuestIsActive;

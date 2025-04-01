@@ -29,9 +29,10 @@ export async function createGame({
     });
 
   const lobbyHasPriorGame = !isNil(gameState.lobbyId);
-  const priorGameIsOngoing = gameState.quests.some((quest) =>
-    isNull(quest.isSuccess)
-  );
+  // TODO move to shared pnpm repo
+  const priorGameIsOngoing =
+    gameState.quests.some((quest) => isNull(quest.isSuccess)) &&
+    !gameState.quests.some((quest) => quest.isSuccess === false);
 
   if (lobbyHasPriorGame && priorGameIsOngoing)
     throw new TRPCError({
