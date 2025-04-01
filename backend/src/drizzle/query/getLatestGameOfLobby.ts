@@ -20,7 +20,9 @@ import {
   turnTable,
 } from "../schema.js";
 
-type Communication = Pick<SelectComunication, "cardId" | "turnId" | "type">;
+type Communication = Pick<SelectComunication, "cardId" | "turnId" | "type"> & {
+  playerId: SelectPlayer["id"];
+};
 export type Turn = {
   card: SelectCard;
   quests: Array<Pick<SelectDraftedQuest, "questId" | "isSuccess">>;
@@ -176,9 +178,21 @@ export async function getLatestGameOfLobby(
       ?.playerId ?? NaN;
 
   const communications =
-    game?.communications.map((communication) =>
-      pick(communication, "cardId", "type", "turnId")
-    ) ?? [];
+    game?.communications.map((communication) => {
+      const playerId = cards.find(
+        (card) => card.playerId === communication.cardId
+      )?.playerId;
+      if (isNil(playerId))
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "A communication should never exist without a playerId",
+        });
+
+      return {
+        ...pick(communication, "cardId", "type", "turnId"),
+        playerId,
+      };
+    }) ?? [];
 
   const questsWihtoutSuccessStatus =
     game?.draftedQuests.reduce<Quest[]>((prev, curr) => {
