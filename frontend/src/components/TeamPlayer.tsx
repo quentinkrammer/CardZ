@@ -49,8 +49,10 @@ export function TeamPlayer({
     return noLongerInHand ? undefined : communication;
   });
 
+  const turnCount = useLobbyStore((state) => state.gameState.turns.length);
+
+  const offsetMultiplier = offsets(range(cardCount ?? 0));
   // todo: why is TSC cli not fondind this
-  const offsetMultiplier = offsets(range(cardCount));
   const position = playerPositionMap[totalPlayerCount][seatNumber];
 
   return (
@@ -66,7 +68,9 @@ export function TeamPlayer({
           const yShift = Math.abs(multiplier) * 3;
 
           const viewTransitionName =
-            index === list.length - 1 ? `card-${playerId}` : undefined;
+            index === list.length - 1
+              ? `card-turn-${turnCount}-player-${playerId}`
+              : undefined;
 
           const style = {
             transform: `translate(${xShift}px, ${yShift}px) rotate(${angleDegree}deg)`,

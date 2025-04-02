@@ -89,7 +89,6 @@ function OpenCards() {
   const lastRoundTurns = useLastRoundTurns();
   const hasActiveTurns = activeTurns.length > 0;
 
-  console.log({ activeTurns, lastRoundTurns });
   return (
     <div className="contents">
       {lastRoundTurns?.map((turn, index, list) => {
@@ -101,8 +100,8 @@ function OpenCards() {
 
         const isMyCard = playerId === turn.playerId;
         const viewTransitionName = isMyCard
-          ? `card-${turn.card.value}-${turn.card.color}`
-          : `card-${playerId}`;
+          ? `card-value-${turn.card.value}-color-${turn.card.color}`
+          : `card-turn-${index}-player-${playerId}`;
         const isLastCardOfRound = index === list.length - 1;
 
         return (
@@ -123,7 +122,7 @@ function OpenCards() {
           />
         );
       })}
-      {activeTurns.map((turn, index, list) => {
+      {activeTurns.map((turn, index) => {
         const playerPosition = sortedPlayers.findIndex(
           (player) => player.playerId === turn.playerId,
         );
@@ -132,9 +131,9 @@ function OpenCards() {
 
         const isMyCard = playerId === turn.playerId;
         const viewTransitionName = isMyCard
-          ? `card-${turn.card.value}-${turn.card.color}`
-          : `card-${playerId}`;
-        const isLastCardOfRound = index === list.length - 1;
+          ? `card-value-${turn.card.value}-color-${turn.card.color}`
+          : `card-turn-${index}-player-${playerId}`;
+        const isLastCardOfRound = index === sortedPlayers.length - 1;
 
         return (
           <Card

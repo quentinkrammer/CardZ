@@ -88,7 +88,7 @@ export function MyHand() {
               style={{
                 bottom: 0,
                 translate: `calc(min(12dvh, 10dvw) * -0.5 + ${offset} * min(12dvh, 10dvw) / 1.7)`,
-                viewTransitionName: `card-${card.value}-${card.color}`,
+                viewTransitionName: `card-value-${card.value}-color-${card.color}`,
               }}
               overlayContainerClass="place-self-center"
               overlay={
