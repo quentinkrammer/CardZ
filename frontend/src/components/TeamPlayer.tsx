@@ -35,6 +35,7 @@ export function TeamPlayer({
     (state) => state.gameState.cardCount[playerId],
   );
 
+  // todo: why is TSC cli not fondind this
   const offsetMultiplier = offsets(range(cardCount));
   const position = playerPositionMap[totalPlayerCount][seatNumber];
 
