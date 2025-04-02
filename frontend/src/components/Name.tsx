@@ -9,6 +9,7 @@ import { isNil } from "lodash";
 import { ComponentProps } from "react";
 import { cn } from "../cn";
 import { useActivePlayer } from "../hooks/useActivePlayer";
+import { useActiveTurns } from "../hooks/useActiveTurns";
 import { useCommuniationOverlayStore } from "../hooks/useCommuniationOverlayStore";
 import { useIsCaptain } from "../hooks/useIsCaptain";
 import { useLobbyStore } from "../hooks/useLobbyStore";
@@ -55,14 +56,20 @@ function SpeakerSymbol({
     (state) => state,
   );
   const draftIsOngoing = useDraftIsOngoing();
+  const roundIsOngoing = useActiveTurns().length > 0;
+
+  const isDisabled = draftIsOngoing || roundIsOngoing;
 
   if (isMe && hasComunicationLeft) {
     return (
       <Button
-        className={cn("min-w-10 rounded-full", isActive && "animate-pulse")}
+        className={cn(
+          "min-w-10 rounded-full",
+          isActive && !isDisabled && "animate-pulse",
+        )}
         label={<FontAwesomeIcon icon={faVolumeHigh} />}
         onClick={onToggleOverlay}
-        disabled={draftIsOngoing}
+        disabled={isDisabled}
       />
     );
   }

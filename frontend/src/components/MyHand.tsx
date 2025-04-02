@@ -134,6 +134,7 @@ function CommunicationButton({
   const lobbyId = useLobbyId();
   const { isActive, toggle: toggleOverlay } = useCommuniationOverlayStore();
   const communicationOption = useCommunicationOption({ cardColor, value });
+  const roundIsOngoing = useActiveTurns().length > 0;
 
   const onCommunicate = () => {
     if (!communicationOption) return;
@@ -141,7 +142,7 @@ function CommunicationButton({
     communicate.mutate({ type: communicationOption, cardId, lobbyId });
   };
 
-  if (!isActive || !communicationOption) return;
+  if (!isActive || !communicationOption || roundIsOngoing) return;
   return (
     <Button
       onClick={onCommunicate}
