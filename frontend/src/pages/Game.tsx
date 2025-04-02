@@ -6,6 +6,7 @@ import { TeamPlayer } from "../components/TeamPlayer";
 import { getValueAndColorFromQuestId } from "../getValueAndColorFromQuestId";
 import { useActivePlayer } from "../hooks/useActivePlayer";
 import { useActiveTurns } from "../hooks/useActiveTurns";
+import { useLastRoundTurns } from "../hooks/useLastRoundTurns";
 import { useNonDraftedQuests } from "../hooks/useLobbyStore";
 import { useMyPlayerId } from "../hooks/useMyPlayerId";
 import { usePlayerSortedByPosition } from "../hooks/usePlayerSortedByPosition";
@@ -53,8 +54,6 @@ function PlayArea() {
   const playerId = useMyPlayerId();
   const lobbyId = useLobbyId();
   const pickQuest = trpc.game.pickQuest.useMutation();
-  const sortedPlayers = usePlayerSortedByPosition();
-  const activeTurns = useActiveTurns();
 
   const onQuest = (questId: string) => {
     if (playerId !== activePlayer?.playerId)
@@ -80,27 +79,77 @@ function PlayArea() {
         })}
       </div>
     );
-  return activeTurns.map((turn) => {
-    const playerPosition = sortedPlayers.findIndex(
-      (player) => player.playerId === turn.playerId,
-    );
-    const cardPosition = cardPositionMap[sortedPlayers.length][playerPosition];
+  return <OpenCards />;
+}
 
-    const isMyCard = playerId === turn.playerId;
-    const viewTransitionName = isMyCard
-      ? `card-${turn.card.value}-${turn.card.color}`
-      : `card-${playerId}`;
+function OpenCards() {
+  const sortedPlayers = usePlayerSortedByPosition();
+  const activeTurns = useActiveTurns();
+  const playerId = useMyPlayerId();
+  const lastRoundTurns = useLastRoundTurns();
+  const hasActiveTurns = activeTurns.length > 0;
 
-    return (
-      <Card
-        cardColor={turn.card.color}
-        value={Number(turn.card.value)}
-        key={turn.turnId}
-        className={cn("col-start-2 row-start-2", cardPosition)}
-        style={{
-          viewTransitionName,
-        }}
-      />
-    );
-  });
+  console.log({ activeTurns, lastRoundTurns });
+  return (
+    <div className="contents">
+      {lastRoundTurns?.map((turn, index, list) => {
+        const playerPosition = sortedPlayers.findIndex(
+          (player) => player.playerId === turn.playerId,
+        );
+        const cardPosition =
+          cardPositionMap[sortedPlayers.length]![playerPosition];
+
+        const isMyCard = playerId === turn.playerId;
+        const viewTransitionName = isMyCard
+          ? `card-${turn.card.value}-${turn.card.color}`
+          : `card-${playerId}`;
+        const isLastCardOfRound = index === list.length - 1;
+
+        return (
+          <Card
+            cardColor={turn.card.color}
+            value={Number(turn.card.value)}
+            key={`cardId-${turn.card.id}`}
+            className={cn(
+              "col-start-2 row-start-2 opacity-0 transition-opacity delay-200 duration-[2s] ease-in",
+              hasActiveTurns || "starting:opacity-100",
+              cardPosition,
+            )}
+            style={{
+              viewTransitionName: isLastCardOfRound
+                ? viewTransitionName
+                : undefined,
+            }}
+          />
+        );
+      })}
+      {activeTurns.map((turn, index, list) => {
+        const playerPosition = sortedPlayers.findIndex(
+          (player) => player.playerId === turn.playerId,
+        );
+        const cardPosition =
+          cardPositionMap[sortedPlayers.length]![playerPosition];
+
+        const isMyCard = playerId === turn.playerId;
+        const viewTransitionName = isMyCard
+          ? `card-${turn.card.value}-${turn.card.color}`
+          : `card-${playerId}`;
+        const isLastCardOfRound = index === list.length - 1;
+
+        return (
+          <Card
+            cardColor={turn.card.color}
+            value={Number(turn.card.value)}
+            key={turn.turnId}
+            className={cn("isolate col-start-2 row-start-2", cardPosition)}
+            style={{
+              viewTransitionName: isLastCardOfRound
+                ? undefined
+                : viewTransitionName,
+            }}
+          />
+        );
+      })}
+    </div>
+  );
 }

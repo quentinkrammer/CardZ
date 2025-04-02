@@ -1,15 +1,18 @@
 import { useShallow } from "zustand/react/shallow";
 import { useLobbyStore } from "./useLobbyStore";
 
-export function useActiveTurns() {
+export function useLastRoundTurns() {
   return useLobbyStore(
     useShallow(({ gameState }) => {
-      const turns = gameState.turns;
       const playerCount = gameState.players.length;
+      if (gameState.turns.length < playerCount) return;
 
+      const turns = gameState.turns;
       const activeTurns = turns.length % playerCount;
-      if (!activeTurns) return [];
-      return turns.slice(-activeTurns);
+
+      return activeTurns
+        ? turns.slice(-(playerCount + activeTurns), -activeTurns)
+        : turns.slice(-playerCount);
     }),
   );
 }
