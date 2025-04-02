@@ -112,11 +112,28 @@ export function MyHand() {
 type CommunicationOverlayProps = Pick<CardProps, "value" | "cardColor"> & {
   cardId: number;
 };
-function CommunicationOverlay({
+function CommunicationOverlay(props: CommunicationOverlayProps) {
+  const communication = useLobbyStore((state) =>
+    state.gameState.communications.find(
+      (communication) => communication.cardId === props.cardId,
+    ),
+  );
+
+  if (communication)
+    return (
+      <div className="isolate rounded bg-gray-600 p-2 opacity-80">
+        {communication.type}
+      </div>
+    );
+  return <CommunicationButton {...props} />;
+}
+
+type CommunicationButtonProps = CommunicationOverlayProps;
+function CommunicationButton({
   cardColor,
   value,
   cardId,
-}: CommunicationOverlayProps) {
+}: CommunicationButtonProps) {
   const communicate = trpc.game.communicate.useMutation();
   const lobbyId = useLobbyId();
   const { isActive, toggle: toggleOverlay } = useCommuniationOverlayStore();
@@ -133,7 +150,7 @@ function CommunicationOverlay({
     <Button
       onClick={onCommunicate}
       label={communicationOption}
-      className="min-w-0 opacity-80 drop-shadow-none hover:opacity-100 hover:drop-shadow-[1px_1px_1px_rgba(0,0,0)] active:drop-shadow-none"
+      className="isolate min-w-0 opacity-80 hover:opacity-100 hover:drop-shadow-[1px_1px_1px_rgba(0,0,0)] active:isolate"
     />
   );
 }

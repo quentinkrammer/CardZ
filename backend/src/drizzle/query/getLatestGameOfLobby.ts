@@ -22,6 +22,8 @@ import {
 
 type Communication = Pick<SelectComunication, "cardId" | "type"> & {
   playerId: SelectPlayer["id"];
+  cardValue: SelectCard["value"];
+  cardColor: SelectCard["color"];
 };
 export type Turn = {
   card: SelectCard;
@@ -179,18 +181,19 @@ export async function getLatestGameOfLobby(
 
   const communications =
     game?.communications.map((communication) => {
-      const playerId = cards.find(
-        (card) => card.id === communication.cardId
-      )?.playerId;
-      if (isNil(playerId))
+      const card = cards.find((card) => card.id === communication.cardId);
+
+      if (isNil(card))
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "A communication should never exist without a playerId",
+          message: "CardId of Communication can't be found.",
         });
 
       return {
         ...pick(communication, "cardId", "type"),
-        playerId,
+        playerId: card.playerId,
+        cardColor: card.color,
+        cardValue: card.value,
       };
     }) ?? [];
 
