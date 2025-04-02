@@ -14,6 +14,7 @@ import { trpc } from "../trpc";
 import { Color } from "../types";
 import { Button } from "./Button";
 import { Card, CardProps } from "./Card";
+import { CommunicationLabel } from "./CommunicationLabel";
 import { Name } from "./Name";
 import { Quests } from "./Quests";
 
@@ -119,12 +120,7 @@ function CommunicationOverlay(props: CommunicationOverlayProps) {
     ),
   );
 
-  if (communication)
-    return (
-      <div className="isolate rounded bg-gray-600 p-2 opacity-80">
-        {communication.type}
-      </div>
-    );
+  if (communication) return <CommunicationLabel label={communication.type} />;
   return <CommunicationButton {...props} />;
 }
 
