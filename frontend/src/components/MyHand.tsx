@@ -119,17 +119,19 @@ function CommunicationOverlay({
 }: CommunicationOverlayProps) {
   const communicate = trpc.game.communicate.useMutation();
   const lobbyId = useLobbyId();
-  const overlayIsActive = useCommuniationOverlayStore(
-    (state) => state.isActive,
-  );
+  const { isActive, toggle: toggleOverlay } = useCommuniationOverlayStore();
   const communicationOption = useCommunicationOption({ cardColor, value });
 
-  if (!overlayIsActive || !communicationOption) return;
+  const onCommunicate = () => {
+    if (!communicationOption) return;
+    toggleOverlay();
+    communicate.mutate({ type: communicationOption, cardId, lobbyId });
+  };
+
+  if (!isActive || !communicationOption) return;
   return (
     <Button
-      onClick={() =>
-        communicate.mutate({ type: communicationOption, cardId, lobbyId })
-      }
+      onClick={onCommunicate}
       label={communicationOption}
       className="min-w-0 opacity-80 drop-shadow-none hover:opacity-100 hover:drop-shadow-[1px_1px_1px_rgba(0,0,0)] active:drop-shadow-none"
     />
@@ -141,6 +143,8 @@ function useCommunicationOption({
   value,
 }: Pick<CardProps, "value" | "cardColor">) {
   return useLobbyStore((state) => {
+    if (cardColor === "black") return;
+
     const cards = state.gameState.cards.filter(
       (card) => card.color === cardColor,
     );

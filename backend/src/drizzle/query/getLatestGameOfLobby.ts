@@ -20,7 +20,7 @@ import {
   turnTable,
 } from "../schema.js";
 
-type Communication = Pick<SelectComunication, "cardId" | "turnId" | "type"> & {
+type Communication = Pick<SelectComunication, "cardId" | "type"> & {
   playerId: SelectPlayer["id"];
 };
 export type Turn = {
@@ -180,7 +180,7 @@ export async function getLatestGameOfLobby(
   const communications =
     game?.communications.map((communication) => {
       const playerId = cards.find(
-        (card) => card.playerId === communication.cardId
+        (card) => card.id === communication.cardId
       )?.playerId;
       if (isNil(playerId))
         throw new TRPCError({
@@ -189,7 +189,7 @@ export async function getLatestGameOfLobby(
         });
 
       return {
-        ...pick(communication, "cardId", "type", "turnId"),
+        ...pick(communication, "cardId", "type"),
         playerId,
       };
     }) ?? [];

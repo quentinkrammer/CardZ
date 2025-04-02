@@ -87,10 +87,7 @@ export const gameRouter = t.router({
           message: `No active game found in lobby with ID ${lobbyId}`,
         });
 
-      const turnId = gameState.turns.at(-1)?.turnId;
-      await db
-        .insert(communicationTable)
-        .values({ cardId, gameId, type, turnId });
+      await db.insert(communicationTable).values({ cardId, gameId, type });
 
       const newGameState = await getLatestGameOfLobby(lobbyId);
       iterateGameStateForEachUser(newGameState, (data) => {

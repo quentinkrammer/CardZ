@@ -113,8 +113,8 @@ function CopyToClipboard({ defaultValue }: Pick<InputProps, "defaultValue">) {
 type UsersProps = ComponentProps<"div">;
 function Users({ className }: UsersProps) {
   const users = useUsersStore();
-  const myData = useMyUserData();
-
+  const { data, isLoading } = useMyUserData();
+  if (isLoading) return "...loading";
   return (
     <div className={cn("flex flex-col gap-3", className)}>
       {range(4).map((index) => {
@@ -129,7 +129,7 @@ function Users({ className }: UsersProps) {
             </div>
           );
         }
-        if (user.userId !== myData.data?.id) {
+        if (user.userId !== data?.id) {
           return (
             <div className="cursor-default rounded bg-gray-900 p-2" key={index}>
               {user.name}

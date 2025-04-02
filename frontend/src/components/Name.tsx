@@ -5,6 +5,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GameState } from "backend";
+import { isNil } from "lodash";
 import { ComponentProps } from "react";
 import { cn } from "../cn";
 import { useCommuniationOverlayStore } from "../hooks/useCommuniationOverlayStore";
@@ -37,6 +38,7 @@ function SpeakerSymbol({
   const isMe = useIsMyPlayerId(playerId);
   const hasComunicationLeft = !useCommunication(playerId);
   const onToggleOverlay = useCommuniationOverlayStore((state) => state.toggle);
+  const draftIsOngoing = useDraftIsOngoing();
 
   if (isMe && hasComunicationLeft) {
     return (
@@ -44,6 +46,7 @@ function SpeakerSymbol({
         className="min-w-10 rounded-full"
         label={<FontAwesomeIcon icon={faVolumeHigh} />}
         onClick={onToggleOverlay}
+        disabled={draftIsOngoing}
       />
     );
   }
@@ -71,4 +74,10 @@ function useCommunication(playerId: GameState["captainsPlayerId"]) {
       (communication) => communication.playerId === playerId,
     );
   });
+}
+
+function useDraftIsOngoing() {
+  return useLobbyStore((state) =>
+    state.gameState.quests.some((quest) => isNil(quest.playerId)),
+  );
 }
