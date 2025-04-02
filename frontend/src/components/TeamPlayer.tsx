@@ -57,7 +57,7 @@ export function TeamPlayer({
     <>
       <Name
         playerId={playerId}
-        className={cn("self-start justify-self-center p-3", position)}
+        className={cn("self-start justify-self-center", position)}
       />
       <div className="contents">
         {offsetMultiplier.map((multiplier, index, list) => {

@@ -8,6 +8,7 @@ import { GameState } from "backend";
 import { isNil } from "lodash";
 import { ComponentProps } from "react";
 import { cn } from "../cn";
+import { useActivePlayer } from "../hooks/useActivePlayer";
 import { useCommuniationOverlayStore } from "../hooks/useCommuniationOverlayStore";
 import { useIsCaptain } from "../hooks/useIsCaptain";
 import { useLobbyStore } from "../hooks/useLobbyStore";
@@ -17,12 +18,25 @@ import { Button } from "./Button";
 type NameProps = ComponentProps<"div"> & {
   playerId: GameState["captainsPlayerId"];
 };
-export function Name({ playerId, className, ...forwardProps }: NameProps) {
+export function Name({
+  playerId,
+  className,
+
+  ...forwardProps
+}: NameProps) {
   const isCaptain = useIsCaptain(playerId);
   const name = usePlayerName(playerId);
-
+  const activePlayer = useActivePlayer();
+  const isActivePlayer = activePlayer?.playerId === playerId;
   return (
-    <div className={cn("flex items-center gap-2", className)} {...forwardProps}>
+    <div
+      className={cn(
+        "flex items-center gap-2 rounded p-3 transition",
+        isActivePlayer && "border backdrop-brightness-200",
+        className,
+      )}
+      {...forwardProps}
+    >
       <div>{name}</div>
       {isCaptain && <FontAwesomeIcon icon={faCopyright} />}
       <SpeakerSymbol playerId={playerId} />
