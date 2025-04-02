@@ -51,13 +51,15 @@ function SpeakerSymbol({
 }) {
   const isMe = useIsMyPlayerId(playerId);
   const hasComunicationLeft = !useCommunication(playerId);
-  const onToggleOverlay = useCommuniationOverlayStore((state) => state.toggle);
+  const { isActive, toggle: onToggleOverlay } = useCommuniationOverlayStore(
+    (state) => state,
+  );
   const draftIsOngoing = useDraftIsOngoing();
 
   if (isMe && hasComunicationLeft) {
     return (
       <Button
-        className="min-w-10 rounded-full"
+        className={cn("min-w-10 rounded-full", isActive && "animate-pulse")}
         label={<FontAwesomeIcon icon={faVolumeHigh} />}
         onClick={onToggleOverlay}
         disabled={draftIsOngoing}
