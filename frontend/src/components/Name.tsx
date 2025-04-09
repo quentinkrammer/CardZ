@@ -33,7 +33,7 @@ export function Name({
     <div
       className={cn(
         "flex items-center gap-2 rounded p-3 transition",
-        isActivePlayer && "border backdrop-brightness-200",
+        isActivePlayer && "border backdrop-grayscale-50",
         className,
       )}
       {...forwardProps}
