@@ -2,10 +2,14 @@ import { createHTTPServer } from "@trpc/server/adapters/standalone";
 import connect from "connect";
 import cookie from "cookie";
 import cors from "cors";
+import { eq } from "drizzle-orm";
 import jwt from "jsonwebtoken";
 import { nanoid } from "nanoid";
+import { z } from "zod";
 import { env } from "../env.js";
+import { db } from "./drizzle/drizzle.js";
 import { createUser } from "./drizzle/query/createUser.js";
+import { usersTable } from "./drizzle/schema.js";
 import { appRouter } from "./trpc/appRouter.js";
 import { createContext } from "./trpc/trpc.js";
 
@@ -42,6 +46,28 @@ middleware
               path: "/",
             })
           );
+        } else {
+          const userIdFromToken = z.string().parse(token);
+
+          const user = await db.query.usersTable.findFirst({
+            where: eq(usersTable.id, userIdFromToken),
+          });
+          if (!user) {
+            newUserId = nanoid();
+            await createUser({ id: newUserId });
+
+            const newSignedUserIdToken = jwt.sign(newUserId, COOKIE_SECRET);
+            res.setHeader(
+              "Set-Cookie",
+              cookie.serialize(COOKIE_NAME_USER_ID, newSignedUserIdToken, {
+                httpOnly: true,
+                maxAge: 60 * 60 * 24 * 365,
+                secure: true,
+                sameSite: "lax",
+                path: "/",
+              })
+            );
+          }
         }
         // @ts-expect-error the "userId" is added to the req
         req["userId"] = newUserId ?? token;
