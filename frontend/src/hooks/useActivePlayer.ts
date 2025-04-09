@@ -1,6 +1,7 @@
 import { GameState } from "backend";
 import { isNil } from "lodash";
 import { useShallow } from "zustand/react/shallow";
+import { getWinningPlayer } from "../utils/getWinningPlayer";
 import { pick } from "../utils/pick";
 import { useLobbyStore } from "./useLobbyStore";
 import { sortPlayerByCaptain } from "./usePlayerSortedByCaptain";
@@ -57,27 +58,6 @@ function getNextPlayer({
   const nextIndex =
     lastPlayerIndex === players.length - 1 ? 0 : lastPlayerIndex + 1;
   return players[nextIndex];
-}
-
-// TODO move to shared pnpm workspace
-function getWinningPlayer(turns: GameState["turns"]) {
-  const cards = turns.map((turn) => ({
-    ...turn.card,
-    playerId: turn.playerId,
-  }));
-
-  if (cards.length === 0) return;
-
-  const winningCard = cards.reduce((prev, curr) => {
-    // sticht mit trumpf
-    if (curr.color === "black" && prev.color !== "black") return curr;
-    // farbe nicht bedient
-    if (curr.color !== prev.color) return prev;
-    // nummer ist niedriger
-    if (curr.value < prev.value) return prev;
-    return curr;
-  }, cards[0]!);
-  return winningCard.playerId;
 }
 
 function getDraftingPlayer({

@@ -1,4 +1,8 @@
+import { faEye } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useState } from "react";
 import { cn } from "../cn";
+import { Button } from "../components/Button";
 import { Card } from "../components/Card";
 import { MyHand } from "../components/MyHand";
 import { Quest } from "../components/Quest";
@@ -12,6 +16,21 @@ import { useMyPlayerId } from "../hooks/useMyPlayerId";
 import { usePlayerSortedByPosition } from "../hooks/usePlayerSortedByPosition";
 import { useLobbyId } from "../hooks/useUrlParams";
 import { trpc } from "../trpc";
+import { getWinningPlayer } from "../utils/getWinningPlayer";
+
+const cardPositionMap: Record<number, Record<number, string>> = {
+  3: {
+    0: "self-end justify-self-center",
+    1: "self-start justify-self-start",
+    2: "self-start justify-self-end",
+  },
+  4: {
+    0: "self-end justify-self-center",
+    1: "self-center justify-self-start",
+    2: "self-start justify-self-center",
+    3: "self-center justify-self-end",
+  },
+};
 
 export function Game() {
   const player = usePlayerSortedByPosition();
@@ -31,23 +50,54 @@ export function Game() {
       })}
       <PlayArea />
       <MyHand />
+      <ViewLastRound />
     </div>
   );
 }
 
-const cardPositionMap: Record<number, Record<number, string>> = {
-  3: {
-    0: "self-end justify-self-center",
-    1: "self-start justify-self-start",
-    2: "self-start justify-self-end",
-  },
-  4: {
-    0: "self-end justify-self-center",
-    1: "self-center justify-self-start",
-    2: "self-start justify-self-center",
-    3: "self-center justify-self-end",
-  },
-};
+function ViewLastRound() {
+  const [visible, setVisible] = useState(false);
+  const turns = useLastRoundTurns();
+  const winningPlayerId = getWinningPlayer(turns ?? []);
+
+  return (
+    <>
+      <Button
+        label={<FontAwesomeIcon icon={faEye} />}
+        className={cn(
+          "col-start-2 row-start-2 min-w-10 self-end justify-self-end rounded-full",
+          visible && "animate-pulse",
+        )}
+        onClick={() => {
+          setVisible((visible) => !visible);
+        }}
+      />
+
+      {turns?.map((turn, index) => {
+        const isWinningCard = turn.playerId === winningPlayerId;
+        return (
+          <Card
+            key={`${turn.turnId}-${index}`}
+            cardColor={turn.card.color}
+            value={Number(turn.card.value)}
+            className={cn(
+              "isolate col-start-2 row-start-2",
+              cardPositionMap[turns.length]?.[index],
+              !visible && "hidden",
+            )}
+            overlay={
+              <div className="self-end justify-self-center font-extrabold text-black backdrop-blur-[1px] backdrop-contrast-50">
+                {`#${index + 1} ${isWinningCard ? "WON" : ""}`}
+              </div>
+            }
+            overlayContainerClass="grid"
+          />
+        );
+      })}
+    </>
+  );
+}
+
 function PlayArea() {
   const quest = useNonDraftedQuests();
   const activePlayer = useActivePlayer();
