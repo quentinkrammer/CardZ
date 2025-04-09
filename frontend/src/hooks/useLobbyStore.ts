@@ -1,5 +1,5 @@
 import { GameState } from "backend";
-import { isNil, isNull } from "lodash";
+import { isNull } from "lodash";
 import { create } from "zustand";
 import { useShallow } from "zustand/react/shallow";
 import { Omit } from "../types";
@@ -42,19 +42,13 @@ export function useQuestToBeDraftedCount() {
   return useLobbyStore((state) => state.gameState.questToBeDraftedCount);
 }
 
-// todo extract util to move to shared pnpm repo
-export function useGameIsOngoing() {
-  return useLobbyStore((state) => {
-    const quests = state.gameState.quests;
-
-    const someQuestHasFailed = quests.some(
-      (quest) => quest.isSuccess === false,
-    );
-    if (someQuestHasFailed) return false;
-
-    const someQuestIsActive = quests.some((quest) => isNil(quest.isSuccess));
-
-    return quests.length >= 1 && someQuestIsActive;
+export function useGameStatus() {
+  return useLobbyStore(({ gameState: { quests } }) => {
+    if (quests.some((quest) => isNull(quest.playerId))) return "draft";
+    if (quests.some((quest) => quest.isSuccess === false)) return "defeat";
+    if (quests.some((quest) => isNull(quest.isSuccess))) return "ongoing";
+    if (quests.every((quest) => quest.isSuccess)) return "victory";
+    return "defeat";
   });
 }
 

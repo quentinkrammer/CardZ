@@ -4,6 +4,7 @@ import { useState } from "react";
 import { cn } from "../cn";
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
+import { GameOver } from "../components/GameOver";
 import { MyHand } from "../components/MyHand";
 import { Quest } from "../components/Quest";
 import { TeamPlayer } from "../components/TeamPlayer";
@@ -50,6 +51,7 @@ export function Game() {
       })}
       <PlayArea />
       <MyHand />
+      <GameOver />
       <ViewLastRound />
     </div>
   );
@@ -67,6 +69,7 @@ function ViewLastRound() {
         className={cn(
           "col-start-2 row-start-2 min-w-10 self-end justify-self-end rounded-full",
           visible && "animate-pulse",
+          !turns && "hidden",
         )}
         onClick={() => {
           setVisible((visible) => !visible);

@@ -6,7 +6,7 @@ import { cn } from "../cn";
 import { useActivePlayer } from "../hooks/useActivePlayer";
 import { useActiveTurns } from "../hooks/useActiveTurns";
 import { useCommuniationOverlayStore } from "../hooks/useCommuniationOverlayStore";
-import { useLobbyStore, useNonDraftedQuests } from "../hooks/useLobbyStore";
+import { useGameStatus, useLobbyStore } from "../hooks/useLobbyStore";
 import { useMyPlayerId } from "../hooks/useMyPlayerId";
 import { useLobbyId } from "../hooks/useUrlParams";
 import { offsetToMiddle } from "../offsetToMiddle";
@@ -36,13 +36,13 @@ export function MyHand() {
   const lobbyId = useLobbyId();
   const activePlayer = useActivePlayer();
   const playCard = trpc.game.playCard.useMutation();
-  const isDraftingPhase = useNonDraftedQuests().length > 0;
+  const gameStatus = useGameStatus();
   const activeTurns = useActiveTurns();
 
   const onCard = (card: GameState["cards"][number]) => {
+    if (gameStatus !== "ongoing") return console.warn("Game is not ongoing.");
     if (playerId !== activePlayer?.playerId)
       return console.warn("It's not your turn");
-    if (isDraftingPhase) return console.warn("It's drafting phase.");
 
     const firstCardOfRound = activeTurns[0]?.card;
     const isFirstCard = !firstCardOfRound;

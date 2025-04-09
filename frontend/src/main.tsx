@@ -8,6 +8,7 @@ import {
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
+import { ViewProvider } from "./components/ViewProvider.tsx";
 import { env } from "./env.ts";
 import "./index.css";
 import { Game } from "./pages/Game.tsx";
@@ -50,7 +51,9 @@ createRoot(document.getElementById("root")!).render(
     <BrowserRouter>
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
         <QueryClientProvider client={queryClient}>
-          <Router />
+          <ViewProvider>
+            <Router />
+          </ViewProvider>
         </QueryClientProvider>
       </trpc.Provider>
     </BrowserRouter>

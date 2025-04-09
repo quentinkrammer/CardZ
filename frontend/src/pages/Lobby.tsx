@@ -8,7 +8,6 @@ import { Button, ButtonProps } from "../components/Button";
 import { Input, InputProps } from "../components/Input";
 import { MyUserName } from "../components/MyUserName";
 import { env } from "../env";
-import { useGameLobbyView } from "../hooks/useGameLobbyView";
 import { useLobbySubscription } from "../hooks/useGameSubscription";
 import {
   useGameIsReadyToBeStarted,
@@ -17,6 +16,7 @@ import {
 } from "../hooks/useLobbyStore";
 import { useMyUserData } from "../hooks/useMyUserData";
 import { useLobbyId } from "../hooks/useUrlParams";
+import { useViewContext } from "../hooks/useViewContext";
 import { trpc } from "../trpc";
 import { Omit } from "../types";
 import { Game } from "./Game";
@@ -27,7 +27,7 @@ export function Lobby() {
   const navigate = useNavigate();
   const lobbyId = useLobbyId();
 
-  const { view, setView } = useGameLobbyView();
+  const { view } = useViewContext();
 
   const onLeave = () => {
     leaveLobby.mutate({ lobbyId });
