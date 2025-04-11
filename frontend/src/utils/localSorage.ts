@@ -8,7 +8,7 @@ type Schema = {
 function createLocalStorage<T extends Schema, U extends keyof T>(schema: T) {
   const getLocalStorage = (key: U) => {
     const value = localStorage.getItem(key as string);
-    return schema[key].or(z.null()).parse(value);
+    return schema[key]?.or(z.null()).parse(value);
   };
 
   const setLocalStorage = (key: U, value: z.infer<T[U]>) => {

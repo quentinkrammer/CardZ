@@ -80,8 +80,7 @@ function getDraftingPlayer({
       (quest) => quest.playerId === player.playerId,
     ).length;
     const nextPlayerQuestCount = quests.filter(
-      // todo why doesnt this show wen using typecheck cli
-      (quest) => quest.playerId === nextPlayer.playerId,
+      (quest) => quest.playerId === nextPlayer?.playerId,
     ).length;
 
     if (playerQuestCount === 0) return player;

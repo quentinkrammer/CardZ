@@ -52,8 +52,7 @@ export function TeamPlayer({
   const turnCount = useLobbyStore((state) => state.gameState.turns.length);
 
   const offsetMultiplier = offsets(range(cardCount ?? 0));
-  // todo: why is TSC cli not fondind this
-  const position = playerPositionMap[totalPlayerCount][seatNumber];
+  const position = playerPositionMap[totalPlayerCount]?.[seatNumber];
 
   return (
     <>

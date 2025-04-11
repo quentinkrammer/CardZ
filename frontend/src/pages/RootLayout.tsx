@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from "react-router";
+import { Outlet } from "react-router";
 
 export function RootLayout() {
   return (
@@ -8,12 +8,13 @@ export function RootLayout() {
   );
 }
 
-function Header() {
-  return (
-    <header className="flex justify-between p-1">
-      <nav>
-        <NavLink to="/">Home</NavLink>
-      </nav>
-    </header>
-  );
-}
+// React Router Link Example
+// function Header() {
+//   return (
+//     <header className="flex justify-between p-1">
+//       <nav>
+//         <NavLink to="/">Home</NavLink>
+//       </nav>
+//     </header>
+//   );
+// }
