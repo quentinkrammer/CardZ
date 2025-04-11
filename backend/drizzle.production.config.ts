@@ -10,4 +10,5 @@ export default {
   dbCredentials: {
     url: z.string().parse(env.parsed?.["VITE_DATABASE_URL"]),
   },
+  out: "./drizzle",
 } satisfies Config;
