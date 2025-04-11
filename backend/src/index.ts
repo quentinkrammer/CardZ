@@ -46,28 +46,27 @@ middleware
               path: "/",
             })
           );
-        } else {
-          const userIdFromToken = z.string().parse(token);
+        }
+        const userIdFromToken = z.string().parse(token);
 
-          const user = await db.query.usersTable.findFirst({
-            where: eq(usersTable.id, userIdFromToken),
-          });
-          if (!user) {
-            newUserId = nanoid();
-            await createUser({ id: newUserId });
+        const user = await db.query.usersTable.findFirst({
+          where: eq(usersTable.id, userIdFromToken),
+        });
+        if (!user) {
+          newUserId = nanoid();
+          await createUser({ id: newUserId });
 
-            const newSignedUserIdToken = jwt.sign(newUserId, COOKIE_SECRET);
-            res.setHeader(
-              "Set-Cookie",
-              cookie.serialize(COOKIE_NAME_USER_ID, newSignedUserIdToken, {
-                httpOnly: true,
-                maxAge: 60 * 60 * 24 * 365,
-                secure: true,
-                sameSite: "lax",
-                path: "/",
-              })
-            );
-          }
+          const newSignedUserIdToken = jwt.sign(newUserId, COOKIE_SECRET);
+          res.setHeader(
+            "Set-Cookie",
+            cookie.serialize(COOKIE_NAME_USER_ID, newSignedUserIdToken, {
+              httpOnly: true,
+              maxAge: 60 * 60 * 24 * 365,
+              secure: true,
+              sameSite: "lax",
+              path: "/",
+            })
+          );
         }
         // @ts-expect-error the "userId" is added to the req
         req["userId"] = newUserId ?? token;
