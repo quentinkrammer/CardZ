@@ -1,6 +1,8 @@
 import { TRPCError } from "@trpc/server";
 import { asc, desc, eq } from "drizzle-orm";
-import { chunk, isNil, isNull } from "lodash";
+import chunk from "lodash/chunk.js";
+import isNil from "lodash/isNil.js";
+import isNull from "lodash/isNull.js";
 import { getWinningPlayer } from "../../utils/getWinningPlayer.js";
 import { pick } from "../../utils/pick.js";
 import { db } from "../drizzle.js";

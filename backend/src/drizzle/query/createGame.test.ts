@@ -1,4 +1,4 @@
-import { groupBy } from "lodash";
+import groupBy from "lodash/groupBy.js";
 import { beforeEach, describe, test } from "vitest";
 import { insertGamePieces } from "../initiateDb.js";
 import { createGame } from "./createGame.js";

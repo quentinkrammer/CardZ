@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
-import { isNil } from "lodash";
+import isNil from "lodash/isNil.js";
 import { z } from "zod";
 import { createGame } from "../drizzle/query/createGame.js";
 import { getLatestGameOfLobby } from "../drizzle/query/getLatestGameOfLobby.js";

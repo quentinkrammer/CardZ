@@ -1,4 +1,4 @@
-import { range } from "lodash";
+import range from "lodash/range.js";
 import { db } from "../drizzle.js";
 import { InsertCard, questTable } from "../schema.js";
 
