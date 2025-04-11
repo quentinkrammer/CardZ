@@ -3,12 +3,14 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "main": "src/index.ts",
   "scripts": {
     "dev": "vite-node --mode development --watch src/index.ts",
+    "build": "tsc --project tsconfig.json && vite build --mode production",
     "stylefix": "prettier ./src --write --config ../.prettierrc.cjs",
     "test": "vitest run",
     "test:db": "rimraf db.test.sqlite && pnpm db:push:test && vitest run",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --project tsconfig.json",
     "db:generate": "drizzle-kit generate --config drizzle.production.config.ts",
     "db:migrate": "drizzle-kit migrate --config drizzle.production.config.ts",
     "db:push": "drizzle-kit push --config drizzle.development.config.ts",
@@ -17,6 +19,7 @@
     "db:ini": "rimraf db.development.sqlite && pnpm db:push && vite-node src/drizzle/drizzle.ts"
   },
   "devDependencies": {
+    "@liuli-util/vite-plugin-node": "^0.9.0",
     "@types/connect": "^3.4.38",
     "@types/cors": "^2.8.17",
     "@types/jsonwebtoken": "^9.0.8",
