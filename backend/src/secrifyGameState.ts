@@ -1,4 +1,4 @@
-import { isNil } from "lodash";
+import isNil from "lodash/isNil.js";
 import { GameState } from "./drizzle/query/getLatestGameOfLobby.js";
 import { SelectUser } from "./drizzle/schema.js";
 

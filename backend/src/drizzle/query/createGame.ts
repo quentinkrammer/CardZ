@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server";
-import { isNil, isNull } from "lodash";
+import isNil from "lodash/isNil.js";
+import isNull from "lodash/isNull.js";
 import { distribute } from "../../distribute.js";
 import { shuffle } from "../../shuffle.js";
 import { db } from "../drizzle.js";

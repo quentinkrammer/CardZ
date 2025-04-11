@@ -1,4 +1,4 @@
-import { random } from "lodash";
+import random from "lodash/random.js";
 import { type GamePieces } from "./drizzle/insertGamePieces.js";
 
 export async function generateDraftedQuestIds({
