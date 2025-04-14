@@ -13,7 +13,7 @@ import { usersTable } from "./drizzle/schema.js";
 import { appRouter } from "./trpc/appRouter.js";
 import { createContext } from "./trpc/trpc.js";
 
-const COOKIE_SECRET = "shhhh";
+const COOKIE_SECRET = env.authCookieSecret;
 const COOKIE_NAME_USER_ID = "userIdToken";
 
 const middleware = connect();

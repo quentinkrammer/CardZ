@@ -2,6 +2,8 @@ import { z } from "zod";
 
 const untyped = {
   // @ts-expect-error env variable missing
+  authCookieSecret: import.meta.env.VITE_AUTH_COOKIE_SECRET,
+  // @ts-expect-error env variable missing
   databaseUrl: import.meta.env.VITE_DATABASE_URL,
   // @ts-expect-error env variable missing
   frontendUrl: JSON.parse(import.meta.env.VITE_FRONTEND_URL),
@@ -19,5 +21,6 @@ export const env = z
     mode: z.string(),
     salt: z.string().transform((value) => Number(value)),
     port: z.string().transform((value) => Number(value)),
+    authCookieSecret: z.string(),
   })
   .parse(untyped);
