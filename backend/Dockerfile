@@ -13,16 +13,16 @@ RUN git clone https://github.com/quentinkrammer/CardZ.git
 
 FROM source AS prod-deps
 WORKDIR /app/CardZ
-RUN pnpm install --prod
+RUN pnpm install --frozen-lockfile
+RUN pnpm --filter=backend --prod deploy prodNodeModules
 
 FROM source AS build
 WORKDIR /app/CardZ/backend
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 RUN pnpm build
 
 FROM base
-COPY --from=prod-deps /app/CardZ/backend/node_modules /app/CardZ/backend/node_modules
-COPY --from=prod-deps /app/CardZ/node_modules /app/CardZ/node_modules
+COPY --from=prod-deps /app/CardZ/prodNodeModules/node_modules /app/CardZ/backend/node_modules
 COPY --from=build /app/CardZ/backend/dist /app/CardZ/backend/dist
 EXPOSE 3000
 
