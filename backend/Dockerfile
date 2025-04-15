@@ -28,4 +28,4 @@ COPY --from=build /app/CardZ/backend/dist /app/CardZ/backend/dist
 COPY --from=build /app/CardZ/backend/db.production.sqlite /app/CardZ/backend/db.production.sqlite
 EXPOSE 3000
 
-ENTRYPOINT ["sleep", "infinity"]
+ENTRYPOINT ["node", "/app/CardZ/backend/dist/index.js"]
