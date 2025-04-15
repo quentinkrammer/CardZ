@@ -31,7 +31,7 @@ middleware
       cookies?.[COOKIE_NAME_USER_ID] ?? "",
       COOKIE_SECRET,
       async function (err, token) {
-        if (err) {
+        async function handleError() {
           newUserId = nanoid();
           await createUser({ id: newUserId });
 
@@ -46,30 +46,36 @@ middleware
               path: "/",
             })
           );
+          // @ts-expect-error the "userId" is added to the req
+          req["userId"] = newUserId;
+          next();
         }
-        const userIdFromToken = z.string().parse(token);
+
+        if (err) {
+          console.log("JWT VERIFY ERROR");
+          await handleError();
+          return;
+        }
+        const { data } = z.string().safeParse(token);
+        if (!data) {
+          console.log("NO TOKEN ERROR");
+          await handleError();
+          return;
+        }
 
         const user = await db.query.usersTable.findFirst({
-          where: eq(usersTable.id, userIdFromToken),
+          where: eq(usersTable.id, data),
         });
-        if (!user) {
-          newUserId = nanoid();
-          await createUser({ id: newUserId });
 
-          const newSignedUserIdToken = jwt.sign(newUserId, COOKIE_SECRET);
-          res.setHeader(
-            "Set-Cookie",
-            cookie.serialize(COOKIE_NAME_USER_ID, newSignedUserIdToken, {
-              httpOnly: true,
-              maxAge: 60 * 60 * 24 * 365,
-              secure: true,
-              sameSite: "lax",
-              path: "/",
-            })
-          );
+        if (!user) {
+          console.log("NO USER ERROR");
+          await handleError();
+          return;
         }
+        console.log("PASSED");
+
         // @ts-expect-error the "userId" is added to the req
-        req["userId"] = newUserId ?? token;
+        req["userId"] = data;
         next();
       }
     );
@@ -81,7 +87,7 @@ const server = createHTTPServer({
   createContext,
 });
 
-server.listen(env.port, "cardz-backend");
+server.listen(env.port);
 // This is needed for HMR.
 // This code hooks into the vite lifecycle and closes the server before HMR.
 // Without closing the server HMR fails cause the port is alredy in use.
