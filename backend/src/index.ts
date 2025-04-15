@@ -81,7 +81,7 @@ const server = createHTTPServer({
   createContext,
 });
 
-server.listen(env.port);
+server.listen(env.port, "cardz-backend");
 // This is needed for HMR.
 // This code hooks into the vite lifecycle and closes the server before HMR.
 // Without closing the server HMR fails cause the port is alredy in use.
