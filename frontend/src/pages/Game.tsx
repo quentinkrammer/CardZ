@@ -127,6 +127,7 @@ function PlayArea() {
               cardColor={color}
               key={questId}
               onDoubleClick={() => onQuest(questId)}
+              className="cursor-pointer"
             />
           );
         })}

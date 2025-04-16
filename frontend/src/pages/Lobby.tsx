@@ -1,13 +1,19 @@
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { range } from "lodash";
-import { ChangeEventHandler, ComponentProps, useCallback, useRef } from "react";
+import {
+  ChangeEventHandler,
+  ComponentProps,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useNavigate } from "react-router";
 import { cn } from "../cn";
 import { Button, ButtonProps } from "../components/Button";
 import { Input, InputProps } from "../components/Input";
 import { MyUserName } from "../components/MyUserName";
-import { env } from "../env";
 import { useLobbySubscription } from "../hooks/useGameSubscription";
 import {
   useGameIsReadyToBeStarted,
@@ -81,17 +87,27 @@ function QuestInput() {
 
 function InviteUrls() {
   const lobbyId = useLobbyId();
+  const locationOrigin = useLocationOrigin();
 
   return (
     <div className="flex max-w-140 grow-1 flex-col gap-3">
       <div>Invite others:</div>
-      <CopyToClipboard defaultValue={lobbyId} />
-      <CopyToClipboard defaultValue={`${env.frontendUrl}/lobby/${lobbyId}`} />
+      <CopyToClipboard value={lobbyId} />
+      <CopyToClipboard value={`${locationOrigin}/lobby/${lobbyId}`} />
     </div>
   );
 }
 
-function CopyToClipboard({ defaultValue }: Pick<InputProps, "defaultValue">) {
+function useLocationOrigin() {
+  const [url, setUrl] = useState("");
+  useEffect(() => {
+    setUrl(window.location.origin);
+  }, []);
+
+  return url;
+}
+
+function CopyToClipboard({ value }: Pick<InputProps, "value">) {
   const ref = useRef<HTMLInputElement>(null);
 
   const onCopy = () => {
@@ -100,7 +116,7 @@ function CopyToClipboard({ defaultValue }: Pick<InputProps, "defaultValue">) {
 
   return (
     <Input
-      defaultValue={defaultValue}
+      value={value}
       ref={ref}
       className="pointer-events-none"
       rightElement={
