@@ -1,12 +1,12 @@
 services:
   cardz-backend:
-    image: cardz-backend
+    image: bopatzable/cardz:backend
     ports:
       - "3000:3000"
     networks:
       - cardz-app
   cardz-frontend:
-    image: cardz-frontend
+    image: bopatzable/cardz:frontend
     stdin_open: true
     ports:
       - "5173:5173"
