@@ -7,11 +7,11 @@ import {
 } from "@trpc/client";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router";
+import { EnsureLogin } from "./components/EnsureLoginProps.tsx";
 import { ViewProvider } from "./components/ViewProvider.tsx";
 import { env } from "./env.ts";
 import "./index.css";
-import { Game } from "./pages/Game.tsx";
 import Home from "./pages/Home.tsx";
 import { Lobby } from "./pages/Lobby.tsx";
 import { RootLayout } from "./pages/RootLayout.tsx";
@@ -65,8 +65,15 @@ export function Router() {
     <Routes>
       <Route element={<RootLayout />}>
         <Route path="/" element={<Home />} />
-        <Route path="lobby/:lobbyId" element={<Lobby />} loader={() => 42} />
-        <Route path="lobby/:lobbyId/game" element={<Game />} />
+        <Route
+          path="lobby/:lobbyId"
+          element={
+            <EnsureLogin>
+              <Lobby />
+            </EnsureLogin>
+          }
+        />
+        <Route path="*" element={<Navigate to={"/"} />} />
       </Route>
     </Routes>
   );
