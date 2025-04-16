@@ -14,16 +14,9 @@ WORKDIR /app/CardZ/frontend
 RUN pnpm install
 RUN pnpm build
 
-FROM alpine:3.13.2 AS server
-# Install thttpd
-RUN apk add thttpd
-# Create a non-root user to own the files and run our server
-RUN adduser -D static
-USER static
-WORKDIR /home/static
-
-COPY --from=build /app/CardZ/frontend/dist/ .
+FROM nginx:alpine AS server
+COPY --from=build /app/CardZ/frontend/dist/ /usr/share/nginx/html
+COPY --from=build /app/CardZ/frontend/nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 5173
-# Run thttpd
-CMD ["thttpd", "-D", "-h", "0.0.0.0", "-p", "5173", "-d", "/home/static", "-u", "static", "-l", "-", "-M", "60"]
+CMD nginx -g 'daemon off;'
