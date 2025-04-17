@@ -169,7 +169,7 @@ function OpenCards() {
             value={Number(turn.card.value)}
             key={`cardId-${turn.card.id}`}
             className={cn(
-              "col-start-2 row-start-2 opacity-0 transition-opacity delay-200 duration-[2s] ease-in",
+              "pointer-events-none col-start-2 row-start-2 opacity-0 transition-opacity delay-200 duration-[2s] ease-in",
               hasActiveTurns || "starting:opacity-100",
               cardPosition,
             )}
