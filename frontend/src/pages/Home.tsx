@@ -44,13 +44,6 @@ export function Home() {
 }
 
 function CommitSha() {
-  const { data: backendSha } = trpc.debug.getComit.useQuery(undefined, {
-    staleTime: Infinity,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-  });
-  return (
-    <div className="fixed right-0.5 bottom-0.5">{`b:${backendSha} f:${commitSha}`}</div>
-  );
+  return <div className="fixed right-0.5 bottom-0.5">{`f:${commitSha}`}</div>;
 }
 export default Home;

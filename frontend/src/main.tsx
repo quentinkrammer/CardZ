@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
   httpBatchLink,
   loggerLink,
@@ -48,6 +49,11 @@ const trpcClient = trpc.createClient({
   ],
 });
 
+queryClient.prefetchQuery({
+  queryKey: [["user", "getMyUserData"], { type: "query" }],
+  queryFn: () => trpcClient.user.getMyUserData.query(),
+});
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
@@ -56,6 +62,7 @@ createRoot(document.getElementById("root")!).render(
           <ViewProvider>
             <Router />
           </ViewProvider>
+          <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
       </trpc.Provider>
     </BrowserRouter>
