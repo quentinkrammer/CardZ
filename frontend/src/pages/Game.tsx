@@ -61,6 +61,7 @@ function ViewLastRound() {
   const [visible, setVisible] = useState(false);
   const turns = useLastRoundTurns();
   const winningPlayerId = getWinningPlayer(turns ?? []);
+  const playerSortedbyPosition = usePlayerSortedByPosition();
 
   return (
     <>
@@ -77,6 +78,10 @@ function ViewLastRound() {
       />
 
       {turns?.map((turn, index) => {
+        const position = playerSortedbyPosition.findIndex(
+          (player) => player.playerId === turn.playerId,
+        );
+
         const isWinningCard = turn.playerId === winningPlayerId;
         return (
           <Card
@@ -85,7 +90,7 @@ function ViewLastRound() {
             value={Number(turn.card.value)}
             className={cn(
               "isolate col-start-2 row-start-2",
-              cardPositionMap[turns.length]?.[index],
+              cardPositionMap[turns.length]?.[position],
               !visible && "hidden",
             )}
             overlay={
