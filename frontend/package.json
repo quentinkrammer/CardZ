@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "typecheck": "pnpm --filter backend build:ts && tsc -b",
     "stylecheck": "prettier . --check --config ./.prettierrc",
-    "stylefix": "prettier . --write --config ./.prettierrc"
+    "stylefix": "prettier . --write --config ./.prettierrc",
+    "genLastCommit": "node src/genLastCommit.js"
   },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
@@ -42,6 +43,7 @@
     "eslint": "^9.17.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.16",
+    "git-last-commit": "^1.0.1",
     "globals": "^15.14.0",
     "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.11",

@@ -4,10 +4,9 @@ import { z } from "zod";
 import { getLatestGameOfLobby } from "../drizzle/query/getLatestGameOfLobby.js";
 import { usersTable } from "../drizzle/schema.js";
 import { iterateGameStateForEachUser } from "../iterateGameStateForEachUser.js";
-import { authedProcedure, ee, publicProcedure, t } from "./trpc.js";
+import { authedProcedure, ee, t } from "./trpc.js";
 
 export const userRouter = t.router({
-  foo: publicProcedure.query(() => "bar"),
   setName: authedProcedure
     .input(z.object({ name: z.string(), lobbyId: z.optional(z.string()) }))
     .mutation(async ({ ctx: { userId, db }, input: { name, lobbyId } }) => {

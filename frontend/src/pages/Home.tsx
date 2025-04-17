@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
+import { commitSha } from "../lastCommit";
 import { trpc } from "../trpc";
 import { getLocalStorage } from "../utils/localSorage";
 
@@ -37,8 +38,19 @@ export function Home() {
         rightElement={<Button label="Join" onClick={onJoin} />}
         onFocus={(event) => event.target.select()}
       />
+      <CommitSha />
     </div>
   );
 }
 
+function CommitSha() {
+  const { data: backendSha } = trpc.debug.getComit.useQuery(undefined, {
+    staleTime: Infinity,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+  });
+  return (
+    <div className="fixed right-0.5 bottom-0.5">{`b:${backendSha} f:${commitSha}`}</div>
+  );
+}
 export default Home;
