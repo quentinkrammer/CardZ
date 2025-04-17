@@ -102,15 +102,21 @@ export const cardRelations = relations(cardTable, ({ many }) => {
   };
 });
 
-export const turnTable = sqliteTable("turns", {
-  id: int().primaryKey({ autoIncrement: true }),
-  cardId: int("card_id")
-    .references(() => cardTable.id)
-    .notNull(),
-  gameId: int("game_id")
-    .references(() => gameTable.id)
-    .notNull(),
-});
+export const turnTable = sqliteTable(
+  "turns",
+  {
+    id: int().primaryKey({ autoIncrement: true }),
+    cardId: int("card_id")
+      .references(() => cardTable.id)
+      .notNull(),
+    gameId: int("game_id")
+      .references(() => gameTable.id)
+      .notNull(),
+  },
+  (table) => {
+    return [unique().on(table.cardId, table.gameId)];
+  }
+);
 export type SelectTurn = InferSelectModel<typeof turnTable>;
 export type InsertTurn = InferInsertModel<typeof turnTable>;
 export const turnRelations = relations(turnTable, ({ many, one }) => {
@@ -127,16 +133,22 @@ export const turnRelations = relations(turnTable, ({ many, one }) => {
   };
 });
 
-export const communicationTable = sqliteTable("communications", {
-  id: int().primaryKey({ autoIncrement: true }),
-  type: text({ enum: ["lowest", "highest", "single"] }).notNull(),
-  cardId: int("card_id")
-    .references(() => cardTable.id)
-    .notNull(),
-  gameId: int("game_id")
-    .references(() => gameTable.id)
-    .notNull(),
-});
+export const communicationTable = sqliteTable(
+  "communications",
+  {
+    id: int().primaryKey({ autoIncrement: true }),
+    type: text({ enum: ["lowest", "highest", "single"] }).notNull(),
+    cardId: int("card_id")
+      .references(() => cardTable.id)
+      .notNull(),
+    gameId: int("game_id")
+      .references(() => gameTable.id)
+      .notNull(),
+  },
+  (table) => {
+    return [unique().on(table.cardId, table.gameId)];
+  }
+);
 export type SelectComunication = InferSelectModel<typeof communicationTable>;
 export type InsertCommunication = InferInsertModel<typeof communicationTable>;
 export const communicationRelations = relations(
@@ -155,20 +167,26 @@ export const communicationRelations = relations(
   }
 );
 
-export const draftedQuestTable = sqliteTable("drafted_quest", {
-  id: int().primaryKey({ autoIncrement: true }),
-  gameId: int("game_id")
-    .references(() => gameTable.id)
-    .notNull(),
-  questId: text("quest_id")
-    .references(() => questTable.id)
-    .notNull(),
-  // This is dangerously bad. Technically a 'drafted-quest' could be assigned to a player,
-  // that does not partake in the game referenced in 'gameId'
-  playerId: int("player_id").references(() => playerTable.id),
-  turnId: int("turn_id").references(() => turnTable.id),
-  isSuccess: int({ mode: "boolean" }),
-});
+export const draftedQuestTable = sqliteTable(
+  "drafted_quest",
+  {
+    id: int().primaryKey({ autoIncrement: true }),
+    gameId: int("game_id")
+      .references(() => gameTable.id)
+      .notNull(),
+    questId: text("quest_id")
+      .references(() => questTable.id)
+      .notNull(),
+    // This is dangerously bad. Technically a 'drafted-quest' could be assigned to a player,
+    // that does not partake in the game referenced in 'gameId'
+    playerId: int("player_id").references(() => playerTable.id),
+    turnId: int("turn_id").references(() => turnTable.id),
+    isSuccess: int({ mode: "boolean" }),
+  },
+  (table) => {
+    return [unique().on(table.gameId, table.questId)];
+  }
+);
 export type SelectDraftedQuest = InferSelectModel<typeof draftedQuestTable>;
 export type InsertDraftedQuest = InferInsertModel<typeof draftedQuestTable>;
 
