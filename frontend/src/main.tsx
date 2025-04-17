@@ -17,7 +17,9 @@ import { Lobby } from "./pages/Lobby.tsx";
 import { RootLayout } from "./pages/RootLayout.tsx";
 import { trpc } from "./trpc.ts";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: false, refetchOnWindowFocus: false } },
+});
 const trpcClient = trpc.createClient({
   links: [
     // adds pretty logs to your console in development and logs errors in production
