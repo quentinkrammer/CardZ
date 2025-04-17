@@ -2,12 +2,10 @@ import { GameState } from "backend";
 import { isNull } from "lodash";
 import { create } from "zustand";
 import { useShallow } from "zustand/react/shallow";
-import { Omit } from "../types";
 
-export type Lobby = Omit<GameState, "lobbyId" | "gameId">;
 type LobbyStore = {
-  gameState: Lobby;
-  update: (lobby: Lobby) => void;
+  gameState: GameState;
+  update: (lobby: GameState) => void;
 };
 export const useLobbyStore = create<LobbyStore>((set) => ({
   gameState: {
@@ -20,6 +18,8 @@ export const useLobbyStore = create<LobbyStore>((set) => ({
     cardCount: {},
     questToBeDraftedCount: 3,
     captainsPlayerId: NaN,
+    lobbyId: "",
+    gameId: NaN,
   },
   update: (lobby) => set({ gameState: lobby }),
 }));

@@ -1,8 +1,9 @@
+import { type GameState } from "backend";
 import { flushSync } from "react-dom";
 import { useNavigate } from "react-router";
 import { trpc } from "../trpc";
 import { setLocalStorage } from "../utils/localSorage";
-import { useLobbyStore, type Lobby } from "./useLobbyStore";
+import { useLobbyStore } from "./useLobbyStore";
 import { useUrlParams } from "./useUrlParams";
 
 const startViewTransition = document.startViewTransition;
@@ -20,12 +21,12 @@ export function useLobbySubscription() {
         setLocalStorage("lobbyId", lobbyId);
 
         if (!startViewTransition) {
-          updateLobby(d as Lobby);
+          updateLobby(d as GameState);
           return;
         }
         document.startViewTransition(() => {
           flushSync(() => {
-            updateLobby(d as Lobby);
+            updateLobby(d as GameState);
           });
         });
         console.log("SSE data:", d);

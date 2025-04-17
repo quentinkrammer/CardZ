@@ -11,12 +11,13 @@ import {
   SelectCard,
 } from "../drizzle/schema.js";
 import { iterateGameStateForEachUser } from "../iterateGameStateForEachUser.js";
+import { errorIfNotActivePlayer } from "../utils/errorIfNotActivePlayer.js";
 import { authedProcedure, ee, t } from "./trpc.js";
 
 export const gameRouter = t.router({
   playCard: authedProcedure
     .input(z.object({ cardId: z.number(), lobbyId: z.string() }))
-    .mutation(async ({ input: { cardId, lobbyId } }) => {
+    .mutation(async ({ input: { cardId, lobbyId }, ctx: { userId } }) => {
       const gameState = await getLatestGameOfLobby(lobbyId);
       const gameId = gameState.gameId;
       if (isNil(gameId))
@@ -24,6 +25,7 @@ export const gameRouter = t.router({
           code: "INTERNAL_SERVER_ERROR",
           message: `No active game found in lobby with ID ${lobbyId}`,
         });
+      errorIfNotActivePlayer({ gameState, userId });
 
       await playCard({ cardId, gameId });
       // TODO write to draftedQuest Table
@@ -51,6 +53,7 @@ export const gameRouter = t.router({
           code: "INTERNAL_SERVER_ERROR",
           message: `No Player found for user with ID ${userId}`,
         });
+      errorIfNotActivePlayer({ gameState, userId });
 
       await db
         .update(draftedQuestTable)
@@ -100,7 +103,7 @@ export const gameRouter = t.router({
       async ({ input: { lobbyId, numberOfQuests }, ctx: { gamePieces } }) => {
         await createGame({ lobbyId, numberOfQuests, gamePieces });
         // TODO: this query in theory should not be needed.
-        // the game state can be asselmbled inside the above createGame function instead
+        // the game state can be assembled inside the above createGame function instead
         const gameState = await getLatestGameOfLobby(lobbyId);
 
         iterateGameStateForEachUser(gameState, (data) => {
