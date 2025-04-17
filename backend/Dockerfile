@@ -19,6 +19,7 @@ RUN pnpm --filter=backend --prod deploy prodNodeModules
 FROM source AS build
 WORKDIR /app/CardZ/backend
 RUN pnpm install --frozen-lockfile
+RUN pnpm genLastCommit
 RUN pnpm build
 RUN pnpm db:migrate
 
@@ -26,6 +27,7 @@ FROM base
 COPY --from=prod-deps /app/CardZ/prodNodeModules/node_modules /app/CardZ/backend/node_modules
 COPY --from=build /app/CardZ/backend/dist /app/CardZ/backend/dist
 COPY --from=build /app/CardZ/backend/db.production.sqlite /app/CardZ/backend/db.production.sqlite
+
 EXPOSE 3000
 
 ENTRYPOINT ["node", "/app/CardZ/backend/dist/index.js"]

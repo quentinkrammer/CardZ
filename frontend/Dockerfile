@@ -12,11 +12,14 @@ RUN git clone https://github.com/quentinkrammer/CardZ.git
 
 WORKDIR /app/CardZ/frontend
 RUN pnpm install
+RUN pnpm genLastCommit
 RUN pnpm build
+
 
 FROM nginx:alpine AS server
 COPY --from=build /app/CardZ/frontend/dist/ /usr/share/nginx/html
 COPY --from=build /app/CardZ/frontend/nginx.conf /etc/nginx/nginx.conf
 
+
 EXPOSE 5173
-CMD nginx -g 'daemon off;'
+CMD ["nginx", "-g", "daemon off;"]
