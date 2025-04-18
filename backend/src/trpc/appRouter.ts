@@ -5,7 +5,7 @@ import { publicProcedure, t } from "./trpc.js";
 import { userRouter } from "./userRouter.js";
 
 const debugRouter = t.router({
-  getComit: publicProcedure.query(() => {
+  getCommit: publicProcedure.query(() => {
     return (commitSha as string | undefined) ?? "no_backend_sha";
   }),
 });
