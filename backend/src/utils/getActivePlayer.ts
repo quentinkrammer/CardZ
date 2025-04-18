@@ -1,5 +1,5 @@
 import isNil from "lodash/isNil.js";
-import { GameState } from "../drizzle/query/getLatestGameOfLobby.js";
+import { type GameState } from "../types.js";
 import { getWinningPlayer } from "./getWinningPlayer.js";
 import { pick } from "./pick.js";
 

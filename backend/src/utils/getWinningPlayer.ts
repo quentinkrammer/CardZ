@@ -1,4 +1,4 @@
-import { Turn } from "../drizzle/query/getLatestGameOfLobby.js";
+import { Turn } from "../types.js";
 
 // TODO move to shared pnpm workspace
 export function getWinningPlayer(turns: Turn[]) {

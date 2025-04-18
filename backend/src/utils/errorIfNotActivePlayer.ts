@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
-import { GameState } from "../drizzle/query/getLatestGameOfLobby.js";
 import { SelectUser } from "../drizzle/schema.js";
+import { type GameState } from "../types.js";
 
 export function errorIfNotActivePlayer({
   gameState,

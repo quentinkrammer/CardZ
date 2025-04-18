@@ -4,7 +4,7 @@ import {
   faVolumeXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { GameState } from "backend";
+import { type GameState } from "backend";
 import { isNil } from "lodash";
 import { ComponentProps } from "react";
 import { cn } from "../cn";

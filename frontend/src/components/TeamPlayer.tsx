@@ -1,4 +1,4 @@
-import { GameState } from "backend";
+import { type GameState } from "backend";
 import { range } from "lodash";
 import { ComponentProps } from "react";
 import { cn } from "../cn";

@@ -1,7 +1,7 @@
-import { GameState } from "./drizzle/query/getLatestGameOfLobby.js";
 import { SelectUser } from "./drizzle/schema.js";
 import { secrifyGameState } from "./secrifyGameState.js";
 import { subscriptionUrl } from "./subscriptionUrl.js";
+import { type GameState } from "./types.js";
 
 export function iterateGameStateForEachUser(
   game: GameState,

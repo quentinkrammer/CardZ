@@ -1,4 +1,4 @@
-import { GameState } from "backend";
+import { type GameState } from "backend";
 import classNames from "classnames";
 import { isNil } from "lodash";
 import { useShallow } from "zustand/react/shallow";

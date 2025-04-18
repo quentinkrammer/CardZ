@@ -1,4 +1,4 @@
-import { GameState } from "backend";
+import { type GameState } from "backend";
 import { ComponentProps } from "react";
 import { cn } from "../cn";
 import { getQuestStatus } from "../getQuestStatus";

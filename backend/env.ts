@@ -1,16 +1,11 @@
 import { z } from "zod";
 
 const untyped = {
-  // @ts-expect-error env variable missing
-  authCookieSecret: import.meta.env.VITE_AUTH_COOKIE_SECRET,
-  // @ts-expect-error env variable missing
-  databaseUrl: import.meta.env.VITE_DATABASE_URL,
-  // @ts-expect-error env variable missing
-  frontendUrl: JSON.parse(import.meta.env.VITE_FRONTEND_URL),
-  // @ts-expect-error env variable missing
-  salt: import.meta.env.VITE_SALT,
-  // @ts-expect-error env variable missing
-  port: import.meta.env.VITE_PORT,
+  authCookieSecret: import.meta.env["VITE_AUTH_COOKIE_SECRET"],
+  databaseUrl: import.meta.env["VITE_DATABASE_URL"],
+  frontendUrl: JSON.parse(import.meta.env["VITE_FRONTEND_URL"]),
+  salt: import.meta.env["VITE_SALT"],
+  port: import.meta.env["VITE_PORT"],
   mode: import.meta.env.MODE,
 };
 

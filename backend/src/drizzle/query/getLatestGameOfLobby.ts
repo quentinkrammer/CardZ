@@ -3,6 +3,15 @@ import { asc, desc, eq } from "drizzle-orm";
 import chunk from "lodash/chunk.js";
 import isNil from "lodash/isNil.js";
 import isNull from "lodash/isNull.js";
+import {
+  Card,
+  CardCount,
+  GameState,
+  Player,
+  Quest,
+  Turn,
+  User,
+} from "../../types.js";
 import { getActivePlayer } from "../../utils/getActivePlayer.js";
 import { getWinningPlayer } from "../../utils/getWinningPlayer.js";
 import { pick } from "../../utils/pick.js";
@@ -12,52 +21,10 @@ import {
   lobbyTable,
   playerTable,
   SelectCard,
-  SelectComunication,
-  SelectDraftedQuest,
-  SelectGame,
   SelectLobby,
   SelectPlayer,
-  SelectQuest,
-  SelectTurn,
-  SelectUser,
   turnTable,
 } from "../schema.js";
-
-type Communication = Pick<SelectComunication, "cardId" | "type"> & {
-  playerId: SelectPlayer["id"];
-  cardValue: SelectCard["value"];
-  cardColor: SelectCard["color"];
-};
-export type Turn = {
-  card: SelectCard;
-  quests: Array<Pick<SelectDraftedQuest, "questId" | "isSuccess">>;
-  playerId: SelectPlayer["id"];
-  turnId: SelectTurn["id"];
-};
-type Card = SelectCard & { playerId: SelectPlayer["id"] };
-type Quest = Pick<SelectDraftedQuest, "playerId" | "isSuccess"> & {
-  questId: SelectQuest["id"];
-  draftedQuestId: SelectDraftedQuest["id"];
-};
-type User = Pick<SelectUser, "name"> & { userId: SelectUser["id"] };
-type Player = Pick<SelectPlayer, "number" | "userId"> & {
-  playerId: SelectPlayer["id"];
-  isActivePlayer?: boolean;
-};
-type CardCount = Record<SelectPlayer["id"], number>;
-export type GameState = {
-  captainsPlayerId: number;
-  questToBeDraftedCount: number;
-  players: Player[];
-  users: User[];
-  quests: Quest[];
-  turns: Turn[];
-  cards: Card[];
-  communications: Communication[];
-  cardCount: CardCount;
-  lobbyId: SelectLobby["id"];
-  gameId?: SelectGame["id"] | undefined;
-};
 
 export async function getLatestGameOfLobby(
   lobbyId: SelectLobby["id"]

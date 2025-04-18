@@ -1,4 +1,4 @@
-import { GameState } from "backend";
+import { type GameState } from "backend";
 import { useLobbyStore } from "./useLobbyStore";
 
 export function usePlayerName(

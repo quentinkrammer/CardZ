@@ -1,4 +1,4 @@
-import { GameState } from "backend";
+import { type GameState } from "backend";
 
 // TODO move to shared pnpm workspace
 
