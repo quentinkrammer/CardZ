@@ -2,11 +2,10 @@
   "name": "cards",
   "version": "0.0.0",
   "scripts": {
-    "createLastCommit": "node createLastCommit.js"
+    "docker:build": "pnpm --filter backend --filter frontend docker:build",
+    "docker:push": "pnpm --filter backend --filter frontend docker:push"
   },
-  "devDependencies": {
-    "git-last-commit": "^1.0.1"
-  },
+  "devDependencies": {},
   "type": "module",
   "workspaces": [
     "backend",

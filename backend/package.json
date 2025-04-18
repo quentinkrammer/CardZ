@@ -18,7 +18,9 @@
     "db:push:test": "drizzle-kit push --config drizzle.test.config.ts",
     "db:studio": "drizzle-kit studio --config drizzle.development.config.ts",
     "db:ini": "rimraf db.development.sqlite && pnpm db:push && vite-node src/drizzle/drizzle.ts",
-    "genLastCommit": "node src/genLastCommit.js"
+    "genLastCommit": "node src/genLastCommit.js",
+    "docker:build": "docker build -t bopatzable/cardz:backend --no-cache .",
+    "docker:push": "docker push bopatzable/cardz:backend"
   },
   "devDependencies": {
     "@liuli-util/vite-plugin-node": "^0.9.0",

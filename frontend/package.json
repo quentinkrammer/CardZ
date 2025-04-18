@@ -12,7 +12,9 @@
     "typecheck": "pnpm --filter backend build:ts && tsc -b",
     "stylecheck": "prettier . --check --config ./.prettierrc",
     "stylefix": "prettier . --write --config ./.prettierrc",
-    "genLastCommit": "node src/genLastCommit.js"
+    "genLastCommit": "node src/genLastCommit.js",
+    "docker:build": "docker build -t bopatzable/cardz:frontend --no-cache .",
+    "docker:push": "docker push bopatzable/cardz:frontend"
   },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
