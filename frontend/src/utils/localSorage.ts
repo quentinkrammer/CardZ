@@ -29,8 +29,7 @@ function createLocalStorage<T extends Schema, U extends keyof T>(schema: T) {
   const useSetLocalStorage = (key: U, value: z.infer<T[U]>) => {
     useEffect(() => {
       setLocalStorage(key, value);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [key, JSON.stringify(value)]);
+    }, [key, value]);
   };
 
   return {
