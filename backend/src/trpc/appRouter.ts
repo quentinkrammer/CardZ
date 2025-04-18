@@ -6,7 +6,7 @@ import { userRouter } from "./userRouter.js";
 
 const debugRouter = t.router({
   getCommit: publicProcedure.query(() => {
-    return (commitSha as string | undefined) ?? "no_backend_sha";
+    return commitSha ?? "no_backend_sha";
   }),
 });
 
